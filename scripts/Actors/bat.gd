@@ -2,14 +2,19 @@ extends CharacterBody2D
 
 @onready var animator: AnimationPlayer = $AnimationPlayer
 var navigation: RTTstarNavigationGD
-var FLY_SPEED: float = 1 * World.ppu
+var nd: HolonomicND
+var FLY_SPEED: float = 2 * World.ppu
 const DISTANCE_EPSILON: float = World.ppu * 0.5
 var _path_display: RTTstarDisplay = null
 
 func _ready() -> void:
 	animator.play("Fly")
+	
 	navigation = RTTstarNavigationGD.new()
+	nd = HolonomicND.new()
+	
 	add_child(navigation)
+	add_child(nd)
 
 	_path_display = RTTstarDisplay.new()
 	_path_display.show_connections = true
@@ -72,7 +77,6 @@ func _physics_process(_delta: float) -> void:
 		_path_display.set_current_objective(target)
 
 	# Compute direction to the next target
-	var target_position: Vector2 = path[target]
-	var direction: Vector2 = (target_position - global_position).normalized()
+	var direction := nd.compute_direction(global_position, path[target])
 	velocity = direction * FLY_SPEED
 	move_and_slide() # Update physics

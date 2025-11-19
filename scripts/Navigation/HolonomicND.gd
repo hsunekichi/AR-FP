@@ -1,13 +1,13 @@
 class_name HolonomicND
-extends Node
+extends Node2D
 
 var VALLEY_HYSTERESIS: float = PI * 0.75 ## Minimum angle improvement to switch to a non-consecutive target valley
 var RAY_DISTANCE: float = 1.0 * World.ppu
-var PATHFINDER_SHAPE_RADIUS: float = 112
+var PATHFINDER_SHAPE_RADIUS: float = 28
 
 
-func _on_ready() -> void:
-	_pathfinder_shape.radius = PATHFINDER_SHAPE_RADIUS
+func _ready() -> void:
+	_cast_shape.radius = PATHFINDER_SHAPE_RADIUS
 
 	# Setup valley debug line
 	_valley_line = Line2D.new()
@@ -15,21 +15,22 @@ func _on_ready() -> void:
 	_valley_line.default_color = Color.YELLOW
 	World.add_child(_valley_line)
 
-	# Setup pathfinder detection area to roughly detect ground and enable the rays
-	_collision_detection = Area2D.new()
-	add_child(_collision_detection)
+	# This area will enable the rays in a low safety zone (obstacles close)
+	_safety_zone = Area2D.new()
+	add_child(_safety_zone)
 
-	_collision_shape = CollisionShape2D.new()
-	_collision_shape.shape = CircleShape2D.new()
-	_collision_shape.shape.radius = RAY_DISTANCE
-	_collision_detection.add_child(_collision_shape)
+	var safe_shape = CollisionShape2D.new()
+	safe_shape.shape = CircleShape2D.new()
+	safe_shape.shape.radius = RAY_DISTANCE
+	safe_shape.name = "SafeShape"
+	_safety_zone.add_child(safe_shape)
 
-	_collision_detection.monitoring = false
-	_collision_detection.collision_mask = World.GROUND_COLLISION_MASK
-	_collision_detection.collision_layer = 0
+	_safety_zone.monitoring = false
+	_safety_zone.collision_mask = World.GROUND_COLLISION_MASK
+	_safety_zone.collision_layer = 0
 
-	_collision_detection.body_entered.connect(_pathfinder_body_entered)
-	_collision_detection.body_exited.connect(_pathfinder_body_exited)
+	_safety_zone.body_entered.connect(_safety_zone_enter)
+	_safety_zone.body_exited.connect(_safety_zone_exit)
 
 	# Setup proximity rays
 	for i in range(8):
@@ -42,56 +43,48 @@ func _on_ready() -> void:
 		_proximity_rays.append(ray)
 		_ray_angles.append(i * (PI / 4))
 
-	_enable_rays()
-
-func set_shape(ray_radius: float, cast_radius: float) -> void:
+func set_shape(ray_distance: float, cast_radius: float) -> void:
 	PATHFINDER_SHAPE_RADIUS = cast_radius
-	_pathfinder_shape.radius = PATHFINDER_SHAPE_RADIUS
+	_cast_shape.radius = PATHFINDER_SHAPE_RADIUS
 
-	RAY_DISTANCE = ray_radius
-	_collision_shape.shape.radius = RAY_DISTANCE
+	RAY_DISTANCE = ray_distance
+	_safety_zone.get_node("SafeShape").shape.radius = RAY_DISTANCE
 
 	for i in range(8):
 		_proximity_rays[i].target_position = Vector2(1, 0).rotated(i * (PI / 4)) * RAY_DISTANCE
 
-func _pathfinder_body_entered(_body: Node) -> void: # Ground detected
-	_enable_rays()
-func _pathfinder_body_exited(_body: Node) -> void: # Ground lost
-	_disable_rays()
+func _safety_zone_enter(_body: Node) -> void: # Ground detected
+	if nSafetyObstacles == 0:
+		_enable_rays()
+	nSafetyObstacles += 1
+func _safety_zone_exit(_body: Node) -> void: # Ground lost
+	nSafetyObstacles -= 1
+	if nSafetyObstacles == 0:
+		_disable_rays()
 
-func compute_direction(position: Vector2, target: Vector2) -> Vector2:
-	var to_target = target - position
+func compute_direction(actor: Vector2, target: Vector2) -> Vector2:
+	var to_target := target - actor
 	var direction: Vector2 = to_target
-	var ray_end: Vector2 = position + to_target.normalized() * minf(to_target.length(), RAY_DISTANCE * 2.0)
+	var ray_end: Vector2 = actor + to_target.normalized() * minf(to_target.length(), RAY_DISTANCE * 2.0)
 
 	# Path is occluded, we need to change the direction
-	if World.ray_intersects_ground(position, ray_end) or _circle_intersects(position, ray_end):
-		# Select best valley to reach target
-		var valley = _select_valley(position, to_target.angle())
+	if World.ray_intersects_ground(actor, ray_end) or _circle_intersects(actor, ray_end):
+
+		var valley = _select_valley(actor, to_target.angle())
 
 		# Combine fleeing from walls with going to a valley
-		direction = _repel_walls()		
-		if valley != INF: 
-			direction += Vector2(1, 0).rotated(valley)
-			
-			# Update valley line visualization
-			if _valley_line:
-				var line_length = RAY_DISTANCE * 1.5
-				_valley_line.points = [position, position + Vector2(1, 0).rotated(valley) * line_length]
-	else:
-		# Clear valley line when no occlusion
-		if _valley_line:
-			_valley_line.points = []
+		if valley != INF:
+			direction = _repel_walls() + Vector2(1, 0).rotated(valley)
 
 	return direction.normalized()
 
 
-func _isValley(position: Vector2, ray: RayCast2D) -> bool:
+func _isValley(actor: Vector2, ray: RayCast2D) -> bool:
 	# If the ray is not colliding, refine with a shape cast
-	return not ray.is_colliding() and not _circle_intersects(position, position + ray.target_position)
+	return not ray.is_colliding() and not _circle_intersects(actor, actor + ray.target_position)
 
 ## Receives angle in -pi to pi radians
-func _select_valley(position: Vector2, goal: float) -> float:
+func _select_valley(actor: Vector2, goal: float) -> float:
 	# Sort by proximity to goal angle to optimize the search
 	var sorted_rays: Array = range(_proximity_rays.size())
 	sorted_rays.sort_custom(func(a: int, b: int) -> bool:
@@ -106,7 +99,7 @@ func _select_valley(position: Vector2, goal: float) -> float:
 		var distance = absf(angle_difference(_ray_angles[i], goal))
 
 		# Closer to goal and is a valley
-		if distance < closest_distance and _isValley(position, ray):
+		if distance < closest_distance and _isValley(actor, ray):
 			closest_free_idx = i
 			closest_distance = distance
 
@@ -115,17 +108,14 @@ func _select_valley(position: Vector2, goal: float) -> float:
 		return INF
 
 
-	# If we have no current valley, just use the new one
-	if _current_valley_idx == -1:
-		_current_valley_idx = closest_free_idx
-		_current_valley_angle = _ray_angles[closest_free_idx]
-	else: # Compare which valley is better (current or new)
+	# Compare the previous and new valley to apply hysteresis
+	if _current_valley_idx != -1:
 		if (
 			absi(closest_free_idx - _current_valley_idx) == 1 or 								# Consecutive indexes
 			(closest_free_idx == 0 and _current_valley_idx == _proximity_rays.size() - 1) or    # Wrap around valleys
 			(closest_free_idx == _proximity_rays.size() - 1 and _current_valley_idx == 0)
 		):
-			# Consecutive valleys, always switch
+			# Always switch if the valleys are consecutive
 			_current_valley_idx = closest_free_idx
 			_current_valley_angle = _ray_angles[closest_free_idx]
 		else:
@@ -135,6 +125,10 @@ func _select_valley(position: Vector2, goal: float) -> float:
 			if improvement > VALLEY_HYSTERESIS:
 				_current_valley_angle = new_angle
 				_current_valley_idx = closest_free_idx
+	# If we have no previous valley, just use the new one
+	else: 
+		_current_valley_idx = closest_free_idx
+		_current_valley_angle = _ray_angles[closest_free_idx]
 
 	return _current_valley_angle
 
@@ -152,16 +146,16 @@ func _repel_walls() -> Vector2:
 	, Vector2.ZERO)
 
 func _circle_intersects(from: Vector2, to: Vector2) -> bool:
-	var physics := World.get_world_2d().direct_space_state
 
 	var query = PhysicsShapeQueryParameters2D.new()
-	query.shape = _pathfinder_shape
+	query.shape = _cast_shape
 	query.collision_mask = World.GROUND_COLLISION_MASK
 
 	query.transform = Transform2D.IDENTITY
 	query.transform.origin = from
 	query.motion = to - from
 
+	var physics := World.get_world_2d().direct_space_state
 	var result = physics.intersect_shape(query)
 
 	return not result.is_empty()
@@ -178,9 +172,8 @@ var _proximity_rays: Array[RayCast2D] = [] ## Rays used to detect nearby walls
 var _ray_angles: PackedFloat32Array
 var _current_valley_angle: float = INF
 var _current_valley_idx: int = -1
+var nSafetyObstacles: int = 0 ## Number of obstacles in the safety zone
 
-var _pathfinder_shape: CircleShape2D = CircleShape2D.new()
-var _collision_detection: Area2D
-var _collision_shape: CollisionShape2D
-
+var _cast_shape: CircleShape2D = CircleShape2D.new()
+var _safety_zone: Area2D = null
 var _valley_line: Line2D = null  # Debug line for valley angle
