@@ -81,7 +81,7 @@ func _create_single_marker(pos: Vector2, index: int) -> void:
 	
 	# If custom texture is provided, use it
 	# Use custom drawing
-	marker.set_script(preload("res://scripts/Navigation/PathDisplayMarker.gd"))
+	marker.set_script(preload("res://scripts/Navigation/Display/PathDisplayMarker.gd"))
 	marker.set("color", marker_color)
 	marker.set("radius", marker_radius)
 	marker.set("outline_color", marker_outline_color)
@@ -147,4 +147,3 @@ func _draw() -> void:
 		
 		# Draw line
 		draw_line(from_pos, to_pos, connection_color, connection_width, true)
-

@@ -1,5 +1,5 @@
 class_name RTTstarNavigationGD
-extends ActorNavigation
+extends Node
 
 
 
@@ -18,7 +18,7 @@ func generate_trajectory(current_position: Vector2, goal: Vector2) -> PackedVect
 	if _tree.isEmpty(): # Build or refine the tree
 		_build_new_tree(current_position, goal)
 	else:
-		_generate_samples(goal, TREE_REFINE_SAMPLES, false)
+		_generate_samples(current_position, goal, TREE_REFINE_SAMPLES, false)
 
 	var path := _tree.build_path(goal, MAX_NEIGHBORS)
 	
@@ -44,11 +44,11 @@ func _build_new_tree(origin: Vector2, goal: Vector2):
 	restart(origin)
 
 	# Generate many samples to favor a quick path, but stop as soon as the goal is reached
-	_generate_samples(goal, TREE_BUILD_SAMPLES, true)
+	_generate_samples(origin, goal, TREE_BUILD_SAMPLES, true)
 	World.log("Built new RTT* tree with ", _tree.size(), " nodes towards ", goal)
 	
 
-func _generate_samples(goal: Vector2, nSamples: int, stop_on_goal: bool) -> void:
+func _generate_samples(origin: Vector2, goal: Vector2, nSamples: int, stop_on_goal: bool) -> void:
 	# Expand the tree until finished
 	for i in range(nSamples):
 		# Safety to prevent too large trees
@@ -56,7 +56,7 @@ func _generate_samples(goal: Vector2, nSamples: int, stop_on_goal: bool) -> void
 			return
 
 		# Generate a new point
-		var sample_point := _sample_point(goal)
+		var sample_point := _sample_point(origin, goal)
 		_insert_point(sample_point)
 
 		if stop_on_goal and not World.ray_intersects_ground(sample_point, goal):
@@ -64,9 +64,9 @@ func _generate_samples(goal: Vector2, nSamples: int, stop_on_goal: bool) -> void
 
 
 # Uniform disk sampling around the center between actor and target
-func _sample_point(goal: Vector2) -> Vector2:
-	var l_center := (goal - actor.global_position) * 0.5
-	var center := actor.global_position + l_center
+func _sample_point(origin: Vector2, goal: Vector2) -> Vector2:
+	var l_center := (goal - origin) * 0.5
+	var center := origin + l_center
 
 	var angle := randf_range(0, TAU)
 	var d := l_center.length() * SAMPLE_DISTANCE_MULTIPLIER
@@ -105,7 +105,7 @@ func _insert_point(point: Vector2) -> float:
 	if closest_idx == -1: return INF						
 	var new_idx := _tree.connect_point(point, closest_idx)						# Connect best neighbour
 	if _tree_display: _tree_display.add_position(point)
-
+	
 	# Rewire neighbors if this point provides a shorter path
 	for i in range(nearest.size()):		
 		if buff_is_connected[i]:														        				
@@ -119,7 +119,7 @@ func _insert_point(point: Vector2) -> float:
 	return new_distance
 
 
-func _on_ready() -> void:
+func _ready() -> void:
 	_tree_display = RTTstarDisplay.new()
 	_tree_display.marker_color = Color.BLUE
 	_tree_display.marker_radius = 3.0
