@@ -18,6 +18,9 @@ var moveInputX: float:
 var WALK: StringName = "Walk"
 var IDLE: StringName = "Idle"
 
+@onready var sit_timer: Timer = $SitTimer
+var isSit: bool = false
+
 func _ready() -> void:
 	# Compute gravity and jump velocity so the jump reaches MAX_JUMP_HEIGHT
 	# using the kinematic formula: g = 2*h / t^2, v0 = g * t
@@ -28,9 +31,29 @@ func _ready() -> void:
 	gravity = 2.0 * MAX_JUMP_HEIGHT / (TIME_TO_APEX * TIME_TO_APEX)
 	jump_velocity = gravity * TIME_TO_APEX
 
+func sit() -> void:
+	animator.play("SitStart")
+	animator.queue("SitIdle")
+	isSit = true
 
 func _physics_process(_delta: float) -> void:
 	moveInput.x = Input.get_axis("Left", "Right")
+
+	# Handle sitting
+	if isSit:
+		velocity.x = 0
+		if moveInputX != 0: # Finish sitting
+			animator.play("SitEnd")
+			animator.animation_finished.connect(
+			func(_anim_name) -> void:
+				isSit = false
+			)
+		return
+	
+	if moveInput.x != 0: # Each movement restarts the sitting timer
+		sit_timer.start()
+
+	# Handle movement
 	velocity.x = moveInput.x * speed
 
 	# Jump

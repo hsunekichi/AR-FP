@@ -104,33 +104,33 @@ func _select_valley(actor: Vector2, goal: float) -> float:
 			closest_distance = distance
 
 	if closest_free_idx == -1: # No free valley found
-		_current_valley_idx = -1
+		_previous_valley = -1
 		return INF
 
 
 	# Compare the previous and new valley to apply hysteresis
-	if _current_valley_idx != -1:
+	if _previous_valley != -1:
 		if (
-			absi(closest_free_idx - _current_valley_idx) == 1 or 								# Consecutive indexes
-			(closest_free_idx == 0 and _current_valley_idx == _proximity_rays.size() - 1) or    # Wrap around valleys
-			(closest_free_idx == _proximity_rays.size() - 1 and _current_valley_idx == 0)
+			absi(closest_free_idx - _previous_valley) == 1 or 								# Consecutive indexes
+			(closest_free_idx == 0 and _previous_valley == _proximity_rays.size() - 1) or    # Wrap around valleys
+			(closest_free_idx == _proximity_rays.size() - 1 and _previous_valley == 0)
 		):
 			# Always switch if the valleys are consecutive
-			_current_valley_idx = closest_free_idx
-			_current_valley_angle = _ray_angles[closest_free_idx]
+			_previous_valley = closest_free_idx
+			_previous_valley_angle = _ray_angles[closest_free_idx]
 		else:
 			# Not consecutive, apply hysteresis
 			var new_angle = _ray_angles[closest_free_idx]
-			var improvement = absf(angle_difference(_current_valley_angle, goal)) - absf(angle_difference(new_angle, goal))
+			var improvement = absf(angle_difference(_previous_valley_angle, goal)) - absf(angle_difference(new_angle, goal))
 			if improvement > VALLEY_HYSTERESIS:
-				_current_valley_angle = new_angle
-				_current_valley_idx = closest_free_idx
+				_previous_valley_angle = new_angle
+				_previous_valley = closest_free_idx
 	# If we have no previous valley, just use the new one
 	else: 
-		_current_valley_idx = closest_free_idx
-		_current_valley_angle = _ray_angles[closest_free_idx]
+		_previous_valley = closest_free_idx
+		_previous_valley_angle = _ray_angles[closest_free_idx]
 
-	return _current_valley_angle
+	return _previous_valley_angle
 
 ## Returns a force vector to flee from nearby walls
 func _repel_walls() -> Vector2:
@@ -170,8 +170,8 @@ func _disable_rays() -> void:
 
 var _proximity_rays: Array[RayCast2D] = [] ## Rays used to detect nearby walls
 var _ray_angles: PackedFloat32Array
-var _current_valley_angle: float = INF
-var _current_valley_idx: int = -1
+var _previous_valley_angle: float = INF
+var _previous_valley: int = -1
 var nSafetyObstacles: int = 0 ## Number of obstacles in the safety zone
 
 var _cast_shape: CircleShape2D = CircleShape2D.new()
