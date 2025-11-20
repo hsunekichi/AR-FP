@@ -1,9 +1,11 @@
 extends CharacterBody2D
 
+
+@export var FLY_SPEED: float = 2 * World.ppu
+
 @onready var animator: AnimationPlayer = $AnimationPlayer
 var navigation: RTTstarNavigationGD
 var nd: HolonomicND
-var FLY_SPEED: float = 2 * World.ppu
 const DISTANCE_EPSILON: float = World.ppu * 0.5
 var _path_display: RTTstarDisplay = null
 

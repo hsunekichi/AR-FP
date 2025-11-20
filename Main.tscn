@@ -11,17 +11,18 @@ size = Vector2(220, 571)
 
 [node name="Node2D" type="Node2D"]
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
+[node name="Suelo" type="StaticBody2D" parent="."]
 position = Vector2(461, 1013)
 
-[node name="ColorRect" type="ColorRect" parent="StaticBody2D"]
+[node name="ColorRect" type="ColorRect" parent="Suelo"]
 offset_left = -725.0
 offset_top = -123.0
 offset_right = 1926.0
 offset_bottom = 283.0
 color = Color(0, 0, 0, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Suelo"]
+visible = false
 position = Vector2(612.5, 77.5)
 shape = SubResource("RectangleShape2D_glv2v")
 
@@ -36,12 +37,14 @@ offset_bottom = 339.0
 color = Color(0, 0, 0, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2"]
+visible = false
 position = Vector2(-246, 44)
 shape = SubResource("RectangleShape2D_uu6xs")
 
-[node name="Marker2D" type="Marker2D" parent="."]
-position = Vector2(565, 759)
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(592, 808)
 script = ExtResource("2_r0du0")
 
 [node name="Bat" parent="." instance=ExtResource("2_uu6xs")]
 position = Vector2(1131, 764)
+FLY_SPEED = 64.0

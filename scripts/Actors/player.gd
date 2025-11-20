@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 @export var speed: float = 200.0
+@export var sit_time: float = 3.0
 @onready var animator: AnimationPlayer = $AnimationPlayer
 
 @export var MAX_JUMP_HEIGHT: float = 180.0
@@ -18,7 +19,7 @@ var moveInputX: float:
 var WALK: StringName = "Walk"
 var IDLE: StringName = "Idle"
 
-@onready var sit_timer: Timer = $SitTimer
+var sit_timer: Timer
 var isSit: bool = false
 
 func _ready() -> void:
@@ -30,6 +31,12 @@ func _ready() -> void:
 
 	gravity = 2.0 * MAX_JUMP_HEIGHT / (TIME_TO_APEX * TIME_TO_APEX)
 	jump_velocity = gravity * TIME_TO_APEX
+	
+	sit_timer = Timer.new()
+	add_child(sit_timer)
+	sit_timer.one_shot = true
+	sit_timer.wait_time = sit_time
+	sit_timer.timeout.connect(sit)
 
 func sit() -> void:
 	animator.play("SitStart")

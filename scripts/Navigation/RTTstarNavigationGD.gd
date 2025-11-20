@@ -6,9 +6,9 @@ extends Node
 var MAX_NEIGHBORS: int = 5 ## Maximum number of neighbors to consider when connecting a new point, controls efficiency and optimality of paths
 var SAMPLE_DISTANCE_MULTIPLIER: float = 2.0 ## Multiplier for the sampling disk around the actor and goal. 1 means the circle will pass through each of them
 
-var MAX_TREE_SIZE: int = 1000 ## Maximum number of nodes in the RTT* tree
+var MAX_TREE_SIZE: int = 10000 ## Maximum number of nodes in the RTT* tree
 var TREE_BUILD_SAMPLES: int = 100 ## Maxumum number of samples to generate when building a new tree. If a path is found earlier, the process stops
-var TREE_REFINE_SAMPLES: int = 5 ## Number of samples to generate when refining an existing tree
+var TREE_REFINE_SAMPLES: int = 100 ## Number of samples to generate when refining an existing tree
 
 ## Returns a trajectory from the origin to the target, optimized for the current position.
 ##  The trajectory may not be reachable from the current position, in which case the caller 
@@ -20,7 +20,7 @@ func generate_trajectory(current_position: Vector2, goal: Vector2) -> PackedVect
 	else:
 		_generate_samples(current_position, goal, TREE_REFINE_SAMPLES, false)
 
-	var path := _tree.build_path(goal, MAX_NEIGHBORS)
+	var path := build_path(goal, MAX_NEIGHBORS)
 	
 	# Tree is full but no path found, reset
 	if path.is_empty() and _tree.size() == MAX_TREE_SIZE:
@@ -117,6 +117,41 @@ func _insert_point(point: Vector2) -> float:
 				_tree.reconnect_point(idx, new_idx)
 
 	return new_distance
+
+## Computes the best known path from the tree origin to the goal,
+##  or an empty array if no path was found
+func build_path(goal: Vector2, max_neighbors: int) -> PackedVector2Array:
+	# Find best goal parent
+	var nearest := _tree.get_k_nearest(goal, max_neighbors)
+
+	var parent: int = -1
+	var min_distance := INF
+	for i in range(nearest.size()):
+		var p := _tree.get_point(nearest[i])
+		var d = _tree.compute_cost(nearest[i]) + p.distance_to(goal)
+		
+		# Find the best reachable neighbor
+		if not World.ray_intersects_ground(p, goal) \
+				and d < min_distance:
+			parent = nearest[i]
+			min_distance = d 
+
+	if parent == -1:
+		return PackedVector2Array() # No path found
+			
+	# Build path from goal parent to root
+	var path: PackedVector2Array = []
+
+	# Traverse up to the root
+	while parent != -1:
+		path.append(_tree.get_point(parent))
+		parent = _tree.get_parent(parent)
+
+	path.reverse()
+	path.append(goal)
+
+	return path
+
 
 
 func _ready() -> void:
