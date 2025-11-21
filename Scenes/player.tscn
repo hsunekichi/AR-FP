@@ -487,6 +487,7 @@ position = Vector2(31.5, 39)
 shape = SubResource("RectangleShape2D_bg4s2")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+physics_interpolation_mode = 2
+offset = Vector2(0, -160)
+limit_smoothed = true
 position_smoothing_enabled = true
-drag_horizontal_enabled = true
-drag_vertical_enabled = true

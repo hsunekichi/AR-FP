@@ -1,3 +1,10 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+Report/main.aux
+Report/main.log
+Report/main.out
+Report/main.fls
+Report/main.bbl
+Report/main.pdf
+Report/main.fdb_latexmk

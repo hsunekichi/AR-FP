@@ -37,26 +37,29 @@ func _ready() -> void:
 	sit_timer.one_shot = true
 	sit_timer.wait_time = sit_time
 	sit_timer.timeout.connect(sit)
+	sit_timer.start()
 
 func sit() -> void:
 	animator.play("SitStart")
 	animator.queue("SitIdle")
 	isSit = true
+func get_up() -> void:
+	if isSit:
+		animator.play("SitEnd")
+		animator.animation_finished.connect(
+		func(_anim_name) -> void:
+			isSit = false
+			sit_timer.start()
+		)
 
 func _physics_process(_delta: float) -> void:
 	moveInput.x = Input.get_axis("Left", "Right")
 
 	# Handle sitting
-	if isSit:
-		velocity.x = 0
+	if isSit: 
 		if moveInputX != 0: # Finish sitting
-			animator.play("SitEnd")
-			animator.animation_finished.connect(
-			func(_anim_name) -> void:
-				isSit = false
-			)
+			get_up()
 		return
-	
 	if moveInput.x != 0: # Each movement restarts the sitting timer
 		sit_timer.start()
 
