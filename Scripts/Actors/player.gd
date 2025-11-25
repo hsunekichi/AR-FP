@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
-@export var speed: float = 200.0
+@export var speed: float = 250.0
+@export var air_speed: float = 175.0
 @export var sit_time: float = 3.0
 @onready var animator: AnimationPlayer = $AnimationPlayer
 
@@ -52,14 +53,10 @@ func _physics_process(_delta: float) -> void:
 		if moveInputX != 0: # Finish sitting
 			get_up()
 		return
-	if moveInput.x != 0 or not is_on_floor(): # Each movement restarts the sitting timer
+	if moveInput.x != 0: # Each movement restarts the sitting timer
 		sit_timer.start()
 
-	# Handle movement
-	if is_on_floor() or isPropulsing:
-		velocity.x = moveInput.x * speed
-
-	# Jump
+	# Propulsion
 	if Input.is_action_pressed("Jump"):
 		velocity.y = -propulsor_velocity
 		isPropulsing = true
@@ -75,6 +72,12 @@ func _physics_process(_delta: float) -> void:
 		if velocity.y > MAX_FALL_SPEED:
 			velocity.y = MAX_FALL_SPEED
 
+	# X movement
+	if is_on_floor() or isPropulsing:
+		velocity.x = moveInput.x * speed
+	else:
+		velocity.x = moveInput.x * air_speed
+
 	_animation_process(_delta)
 
 	# Move the character using CharacterBody2D helper
@@ -86,9 +89,10 @@ func set_propulsor_visibility(v: bool) -> void:
 
 
 func _animation_process(_delta: float) -> void:
-	if isPropulsing:
+	if not is_on_floor():
 		if animator.current_animation != "Fly":
 			animator.play("Fly")
+		if isPropulsing:	
 			set_propulsor_visibility(true)
 		if velocity.x != 0:
 			look_to(velocity.x)
