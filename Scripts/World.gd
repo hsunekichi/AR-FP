@@ -25,3 +25,8 @@ func log(...msg: Array) -> void:
 
 func teleport_player(p: Vector2) -> void:
 	Player.global_position = p
+
+
+func game_completed() -> void:
+	print("Goal reached")
+	get_tree().reload_current_scene.call_deferred()
