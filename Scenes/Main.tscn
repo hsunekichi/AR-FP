@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bxh11qiblygx0"]
+[gd_scene load_steps=9 format=3 uid="uid://bxh11qiblygx0"]
 
 [ext_resource type="Script" uid="uid://blvnwf5ma8iql" path="res://Scripts/PlayerSpawn.gd" id="1_idj7w"]
 [ext_resource type="PackedScene" uid="uid://tpt7r3tvoka4" path="res://Scenes/bat.tscn" id="2_kln2b"]
@@ -6,6 +6,7 @@
 [ext_resource type="TileSet" uid="uid://cfkxyhw5jrysv" path="res://Scenes/ChocolateTilemap.tres" id="4_rgh2o"]
 [ext_resource type="Script" uid="uid://ynkqwpajeice" path="res://Scripts/Maze.gd" id="5_pbw6q"]
 [ext_resource type="Texture2D" uid="uid://8qkgqa4jd4tm" path="res://Art/Candy Land - full pack/day background.png" id="6_v1gob"]
+[ext_resource type="PackedScene" uid="uid://bifaid8u5yhlb" path="res://Scenes/goal.tscn" id="7_jw32o"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rgh2o"]
 atlas = ExtResource("3_kln2b")
@@ -40,6 +41,7 @@ texture_filter = 1
 position = Vector2(991, 109)
 scale = Vector2(8, 8)
 script = ExtResource("5_pbw6q")
+goal_scene = ExtResource("7_jw32o")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="MazeGenerator"]
 tile_set = ExtResource("4_rgh2o")

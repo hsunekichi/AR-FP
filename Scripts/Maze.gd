@@ -23,6 +23,8 @@ extends Node2D
 @export var tile_single_horizontal_wall: Vector2i = Vector2i(1, 3)
 @export var tile_single_right_wall: Vector2i = Vector2i(2, 3)
 
+@export var goal_scene: PackedScene
+
 # Constants
 const WALL = false
 const PASSAGE = true
@@ -37,6 +39,7 @@ func _ready():
 	build_tilemap()
 
 	teleport_player_to_start()
+	spawn_goal()
 
 func generate_maze():
 	var attempts = 0
@@ -289,3 +292,20 @@ func teleport_player_to_start():
 	
 	# Teleport the player
 	World.teleport_player(global_pos)
+	
+func spawn_goal() -> void:
+	if goal_scene == null:
+		return
+
+	# Goal is at upper right corner
+	var exit_cell := Vector2i(maze_width - 1, 0)
+	var local_pos := tilemap.map_to_local(exit_cell)
+	var world_pos := tilemap.to_global(local_pos)
+	
+	var cell_size: Vector2 = tilemap.tile_set.tile_size
+	world_pos.x += cell_size.x*5
+
+	# Goal scene
+	var goal: Node2D = goal_scene.instantiate()
+	add_child(goal)
+	goal.global_position = world_pos
