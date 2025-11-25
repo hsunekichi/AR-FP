@@ -72,7 +72,7 @@ func spawn_enemies() -> void:
 		var world_pos = tilemap.to_global(local_pos)
 		
 		var enemy: Node2D = enemy_scene.instantiate()
-		get_tree().root.add_child.bind(enemy).call_deferred()
+		World.add_child(enemy)
 		enemy.global_position = world_pos
 
 

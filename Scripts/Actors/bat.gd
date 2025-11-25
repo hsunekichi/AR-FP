@@ -1,9 +1,8 @@
 extends CharacterBody2D
 
 
-@export var FLY_SPEED: float = 2 * World.ppu
+@export var FLY_SPEED: float = 1 * World.ppu
 
-@onready var animator: AnimationPlayer = $AnimationPlayer
 var navigation: RTTstarNavigationGD
 var nd: HolonomicND
 const DISTANCE_EPSILON: float = World.ppu * 0.5
@@ -80,8 +79,6 @@ func _go_to_trajectory(new_path: PackedVector2Array) -> int:
 
 
 func _ready() -> void:
-	animator.play("Fly")
-	
 	navigation = RTTstarNavigationGD.new()
 	nd = HolonomicND.new()
 	

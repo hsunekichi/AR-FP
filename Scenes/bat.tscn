@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://tpt7r3tvoka4"]
+[gd_scene load_steps=9 format=3 uid="uid://tpt7r3tvoka4"]
 
 [ext_resource type="Script" uid="uid://7l17541jahdd" path="res://Scripts/Actors/bat.gd" id="1_g2jdi"]
 [ext_resource type="Texture2D" uid="uid://b4uujx20ws5xt" path="res://Art/Bat/Bat_Fly.png" id="2_qrbwd"]
@@ -39,71 +39,8 @@ animations = [{
 }],
 "loop": true,
 "name": &"Fly",
-"speed": 5.0
+"speed": 10.0
 }]
-
-[sub_resource type="Animation" id="Animation_r0du0"]
-resource_name = "Fly"
-length = 0.40001002
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Bat/AnimatedSprite2D:animation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"Fly"]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Bat/AnimatedSprite2D:frame")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.099999994, 0.19999999, 0.3),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [0, 1, 2, 3]
-}
-
-[sub_resource type="Animation" id="Animation_cm0pq"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Bat/AnimatedSprite2D:animation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"Fly"]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Bat/AnimatedSprite2D:frame")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [0]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_fos0i"]
-_data = {
-&"Fly": SubResource("Animation_r0du0"),
-&"RESET": SubResource("Animation_cm0pq")
-}
 
 [node name="Bat" type="CharacterBody2D"]
 z_index = 1
@@ -120,9 +57,4 @@ texture_filter = 1
 scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_lgr22")
 animation = &"Fly"
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-root_node = NodePath("../..")
-libraries = {
-&"": SubResource("AnimationLibrary_fos0i")
-}
+autoplay = "Fly"

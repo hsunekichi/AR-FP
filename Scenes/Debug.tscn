@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=3 uid="uid://bwb7iybo4w6wk"]
+
+[ext_resource type="Texture2D" uid="uid://8qkgqa4jd4tm" path="res://Art/Candy Land - full pack/day background.png" id="1_xmg8h"]
+[ext_resource type="PackedScene" uid="uid://tpt7r3tvoka4" path="res://Scenes/bat.tscn" id="3_ykmub"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8koso"]
+size = Vector2(3676, 271)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rwhvy"]
+size = Vector2(135, 495)
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Parallax2D" type="Parallax2D" parent="."]
+scroll_scale = Vector2(0.6, 0.6)
+
+[node name="DayBackground" type="Sprite2D" parent="Parallax2D"]
+z_index = -10
+position = Vector2(2457.0002, 52.00006)
+scale = Vector2(1.5646799, 1.5709401)
+texture = ExtResource("1_xmg8h")
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(-369, 335)
+collision_mask = 0
+
+[node name="ColorRect" type="ColorRect" parent="Floor"]
+offset_left = -1308.0
+offset_top = -10.0
+offset_right = 2366.0
+offset_bottom = 261.0
+color = Color(0, 0, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+visible = false
+position = Vector2(527, 125.5)
+shape = SubResource("RectangleShape2D_8koso")
+
+[node name="Wall" type="StaticBody2D" parent="."]
+position = Vector2(-146, 260)
+collision_mask = 0
+
+[node name="ColorRect" type="ColorRect" parent="Wall"]
+offset_left = 476.0
+offset_top = -325.0
+offset_right = 611.0
+offset_bottom = 211.0
+color = Color(0, 0, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall"]
+visible = false
+position = Vector2(543.5, -77.5)
+shape = SubResource("RectangleShape2D_rwhvy")
+
+[node name="Bat" parent="Wall" instance=ExtResource("3_ykmub")]
+position = Vector2(783, -112)

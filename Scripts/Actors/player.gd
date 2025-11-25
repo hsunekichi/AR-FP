@@ -2,6 +2,13 @@ extends CharacterBody2D
 
 @export var speed: float = 250.0
 @export var air_speed: float = 175.0
+
+@export var acceleration: float = 1000.0
+@export var air_acceleration: float = 750.0
+
+@export var brake_acceleration: float = 2500.0
+@export var air_brake_acceleration: float = 1000.0
+
 @export var sit_time: float = 3.0
 @onready var animator: AnimationPlayer = $AnimationPlayer
 
@@ -77,12 +84,27 @@ func _physics_process(_delta: float) -> void:
 		if velocity.y > MAX_FALL_SPEED:
 			velocity.y = MAX_FALL_SPEED
 
-	# X movement
-	if is_on_floor() or isPropulsing:
-		velocity.x = moveInput.x * speed
+	# X movement with acceleration
+	var target_velocity_x: float
+	var accel: float
+	
+	if is_on_floor():
+		target_velocity_x = moveInput.x * speed
+		# Use brake acceleration when stopping or changing direction
+		if moveInput.x == 0 or sign(moveInput.x) != sign(velocity.x):
+			accel = brake_acceleration * _delta
+		else:
+			accel = acceleration * _delta
 	else:
-		velocity.x = moveInput.x * air_speed
-
+		target_velocity_x = moveInput.x * air_speed
+		# Use brake acceleration when stopping or changing direction
+		if moveInput.x == 0 or sign(moveInput.x) != sign(velocity.x):
+			accel = air_brake_acceleration * _delta
+		else:
+			accel = air_acceleration * _delta
+	
+	velocity.x = move_toward(velocity.x, target_velocity_x, accel)
+	
 	_animation_process(_delta)
 
 	# Move the character using CharacterBody2D helper
