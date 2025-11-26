@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://tpt7r3tvoka4"]
+[gd_scene load_steps=10 format=3 uid="uid://tpt7r3tvoka4"]
 
 [ext_resource type="Script" uid="uid://7l17541jahdd" path="res://Scripts/Actors/bat.gd" id="1_g2jdi"]
 [ext_resource type="Texture2D" uid="uid://b4uujx20ws5xt" path="res://Art/Bat/Bat_Fly.png" id="2_qrbwd"]
@@ -42,6 +42,9 @@ animations = [{
 "speed": 10.0
 }]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_jckqh"]
+radius = 19.0
+
 [node name="Bat" type="CharacterBody2D"]
 z_index = 1
 collision_layer = 0
@@ -49,7 +52,7 @@ script = ExtResource("1_g2jdi")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
-position = Vector2(-2, 8)
+position = Vector2(-2, 2)
 shape = SubResource("CircleShape2D_uu6xs")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -58,3 +61,13 @@ scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_lgr22")
 animation = &"Fly"
 autoplay = "Fly"
+
+[node name="PlayerDetection" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetection"]
+visible = false
+shape = SubResource("CircleShape2D_jckqh")
+
+[connection signal="body_entered" from="PlayerDetection" to="." method="actor_collision"]

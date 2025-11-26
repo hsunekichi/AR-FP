@@ -1,4 +1,4 @@
-class_name RainbowPulse
+class_name BatPulse
 extends Node2D
 
 @export var _duration: float = 0.5

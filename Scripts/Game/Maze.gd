@@ -30,6 +30,8 @@ extends Node2D
 
 @export var goal_scene: PackedScene
 
+var enemies: Array = []
+
 # Constants
 const WALL = false
 const PASSAGE = true
@@ -148,7 +150,11 @@ func _ready():
 func spawn_enemies() -> void:
 	if enemy_scene == null:
 		return
-	
+
+	for e in enemies:
+		e.queue_free()
+	enemies.clear()
+
 	var random = RandomNumberGenerator.new()
 	random.randomize()
 	
@@ -180,6 +186,7 @@ func spawn_enemies() -> void:
 		var enemy: Node2D = enemy_scene.instantiate()
 		enemy.global_position = world_pos
 		get_parent().add_child.bind(enemy).call_deferred()
+		enemies.append(enemy)
 
 
 func generate_maze():
@@ -433,6 +440,10 @@ func teleport_player_to_start():
 	
 	# Teleport the player
 	World.teleport_player(global_pos)
+
+func get_start_position() -> Vector2:
+	var start_cell = Vector2i(0, maze_height - 1)
+	return cell_to_world(start_cell)
 	
 func spawn_goal() -> void:
 	if goal_scene == null:

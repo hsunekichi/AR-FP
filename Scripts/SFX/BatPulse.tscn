@@ -1,6 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://cfs35efnpcy5x"]
+[gd_scene load_steps=9 format=3 uid="uid://dhsfyt0thlcdg"]
 
-[ext_resource type="Script" uid="uid://dx3njgfc8rrr2" path="res://Scripts/SFX/LurkerPulse.gd" id="1_b5dwd"]
+[ext_resource type="Script" uid="uid://dx3njgfc8rrr2" path="res://Scripts/SFX/BatPulse.gd" id="1_b5dwd"]
 [ext_resource type="Shader" uid="uid://dfno5vpd2o082" path="res://Scripts/SFX/LurkerPulse.gdshader" id="2_mq5pu"]
 [ext_resource type="Script" uid="uid://bxy0dwo0osf2i" path="res://addons/HelperCode/SpriteBackBufferCopy.gd" id="2_qqqg2"]
 [ext_resource type="Shader" uid="uid://i4hlw1afshkj" path="res://Scripts/SFX/LurkerPulseBlur.gdshader" id="3_qqqg2"]
@@ -33,7 +33,7 @@ z_as_relative = false
 script = ExtResource("1_b5dwd")
 
 [node name="PulseBuffer" type="BackBufferCopy" parent="." node_paths=PackedStringArray("target_sprite")]
-rect = Rect2(524.75, 105.27084, 620, 620)
+rect = Rect2(151, -296.60416, 780, 780)
 script = ExtResource("2_qqqg2")
 target_sprite = NodePath("PulseSprite")
 
@@ -43,7 +43,7 @@ scale = Vector2(900, 900)
 texture = SubResource("GradientTexture1D_4jubh")
 
 [node name="BlurBuffer" type="BackBufferCopy" parent="." node_paths=PackedStringArray("target_sprite")]
-rect = Rect2(519.75, 100.27084, 630, 630)
+rect = Rect2(144.5, -303.10416, 793, 793)
 script = ExtResource("2_qqqg2")
 target_sprite = NodePath("Blur")
 

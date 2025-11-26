@@ -35,14 +35,14 @@ var sit_timer: Timer
 
 ######### State Flags #########
 var isPropulsing: bool = false
+var health: int = 3
+var sugar_level: int = 0
 
 ######### Input #########
 var moveInput: Vector2 = Vector2.ZERO
 
 ######### Components #########
 @onready var animator: AnimationPlayer = $AnimationPlayer
-var rainbowPulseScene: PackedScene = preload("res://Scripts/SFX/RainbowPulse.tscn")
-var rainbowPulse: RainbowPulse
 @onready var rayDestructor: RayCast2D = $RayDestructor
 
 ######### Initialization #########
@@ -70,24 +70,42 @@ func _ready() -> void:
 
 	visible = false
 
-	# Rainbow pulse effect
-	rainbowPulse = rainbowPulseScene.instantiate()
-	World.add_child(rainbowPulse)
-
 	disable_propulsion()
 
 	World.game_finished.connect(disable_input)
+	sugar_level = World.config_value("starting_sugar", 0)
+	health = World.config_value("starting_health", 3)
+	World.sugar_level_changed(sugar_level)
+	World.health_changed(health)
+
+	sugar_rush_duration = World.config_value("sugar_rush_duration", 2.0)
+	sugar_rush_cooldown = World.config_value("sugar_rush_cooldown", 0.5)
+
+func initialize() -> void:
+	health = World.config_value("starting_health", 3)
+	sugar_level = World.config_value("starting_sugar", 0)
+	World.health_changed(health)
+	World.sugar_level_changed(sugar_level)
+	
+	disable_propulsion()
+	animator.play("Idle")
+	current_state = State.NORMAL
+	
+	enable_input()
 
 
 func disable_input() -> void:
 	animator.play("Idle")
 	set_process(false)
 	set_physics_process(false)
-	rainbowPulse.end_pulse()
 func enable_input() -> void:
 	visible = true
 	set_process(true)
 	set_physics_process(true)
+
+func increase_sugar(amount: int = 1) -> void:
+	sugar_level += amount
+	World.sugar_level_changed(sugar_level)
 
 
 ######### Main Physics Loop #########
@@ -127,7 +145,8 @@ func _process_normal_state(delta: float) -> void:
 	# Start sugar rush
 	if Input.is_action_just_pressed("Dash") \
 	   and sugarRushCooldownTimer.is_stopped() \
-	   and sugarRushDurationTimer.is_stopped():
+	   and sugarRushDurationTimer.is_stopped() \
+	   and sugar_level > 0:
 		start_sugar_rush()
 	
 	_handle_sugar_rush()
@@ -165,8 +184,23 @@ func _handle_sugar_rush() -> void:
 
 		sugar_puff.animation_finished.connect(sugar_puff.queue_free, CONNECT_ONE_SHOT)
 
+func on_hit() -> void:
+	health -= 1
+	World.health_changed(health)
+	if health <= 0:
+		World.game_over()
+	else:
+		if not World.get_maze():
+			return
+		var maze = World.get_maze().get_node("MazeGenerator") as MazeGenerator
+		global_position = maze.get_start_position()
+		velocity = Vector2.ZERO
+		maze.spawn_enemies()
 
 func start_sugar_rush() -> void:
+	sugar_level -= 1
+	World.sugar_level_changed(sugar_level)
+
 	sugarRushDurationTimer.start()
 	World.activate_sugar_rush_effect()
 

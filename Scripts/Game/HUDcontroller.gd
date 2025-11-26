@@ -4,26 +4,17 @@ extends CanvasLayer
 
 
 @onready var transition: Node = $Transition
-var mainMenu: Node = null
 
 func _ready() -> void:
 	var tr_nodes = transition.get_children()
 	for child in tr_nodes:
 		child.visible = false
 	transition.visible = true
+	World.game_finished.connect(on_game_ended)
 
-func add_menu(menu: Node) -> void:
-	mainMenu = menu
-	add_child(mainMenu)
-func has_menu() -> bool:
-	return mainMenu != null
-func remove_menu() -> bool:
-	if mainMenu:
-		mainMenu.queue_free()
-		mainMenu = null
-		return true
-	return false
-	
+	$HealthDisplay.visible = false
+	$SugarDisplay.visible = false
+
 func enable_transition():
 	var tr_nodes = transition.get_children()
 
@@ -93,3 +84,19 @@ func disable_transition():
 	var tr_nodes = transition.get_children()
 	for child in tr_nodes:
 		child.visible = false	
+
+func update_health(new_health: int) -> void:
+	var health = $HealthDisplay/Label
+	health.text = "Bob's energy: " + str(new_health)
+
+func update_sugar_level(new_value: int) -> void:
+	var score = $SugarDisplay/Label
+	score.text = "Sugar level: " + str(new_value)
+
+func show_hud() -> void:
+	$HealthDisplay.visible = true
+	$SugarDisplay.visible = true
+
+func on_game_ended() -> void:
+	$HealthDisplay.visible = false
+	$SugarDisplay.visible = false
