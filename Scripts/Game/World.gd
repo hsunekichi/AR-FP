@@ -130,6 +130,7 @@ func load_maze() -> void:
 
 	# Load maze
 	current_scene = maze_scene.instantiate()
+	current_scene.name = "Maze"
 	add_child(current_scene)
 
 	await HUD.disable_transition()
