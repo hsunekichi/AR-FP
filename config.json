@@ -1,6 +1,6 @@
 {
 	"starting_sugar": 3,
-    "starting_health": 1,
-    "sugar_rush_duration": 2.0,
+    "starting_health": 3,
+    "sugar_rush_duration": 3.0,
     "sugar_rush_cooldown": 0.5
 }
