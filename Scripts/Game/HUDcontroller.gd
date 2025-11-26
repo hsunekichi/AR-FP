@@ -4,12 +4,25 @@ extends CanvasLayer
 
 
 @onready var transition: Node = $Transition
+var mainMenu: Node = null
 
 func _ready() -> void:
 	var tr_nodes = transition.get_children()
 	for child in tr_nodes:
 		child.visible = false
 	transition.visible = true
+
+func add_menu(menu: Node) -> void:
+	mainMenu = menu
+	add_child(mainMenu)
+func has_menu() -> bool:
+	return mainMenu != null
+func remove_menu() -> bool:
+	if mainMenu:
+		mainMenu.queue_free()
+		mainMenu = null
+		return true
+	return false
 	
 func enable_transition():
 	var tr_nodes = transition.get_children()
@@ -53,11 +66,6 @@ func enable_transition():
 		# Wait for next frame only if we're not behind schedule
 		if i < total_children:
 			await get_tree().process_frame
-	
-	# Small pause when all are visible (200ms)
-	var pause_end_time = Time.get_ticks_usec() + 200000  # 200ms in microseconds
-	while Time.get_ticks_usec() < pause_end_time:
-		await get_tree().process_frame
 
 	# Wait for a short moment
 	await get_tree().create_timer(0.5).timeout

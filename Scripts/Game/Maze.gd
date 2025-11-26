@@ -1,3 +1,4 @@
+class_name MazeGenerator
 extends Node2D
 
 # Maze configuration
@@ -25,6 +26,7 @@ extends Node2D
 @export var tile_single_left_wall: Vector2i = Vector2i(0, 3)
 @export var tile_single_horizontal_wall: Vector2i = Vector2i(1, 3)
 @export var tile_single_right_wall: Vector2i = Vector2i(2, 3)
+@export var tile_single_cell: Vector2i = Vector2i(3, 3)
 
 @export var goal_scene: PackedScene
 
@@ -36,6 +38,104 @@ const PASSAGE = true
 var maze: Array = []
 
 @onready var tilemap: TileMapLayer = $TileMapLayer
+
+# Coordinate conversion helpers
+func cell_to_world(cell: Vector2i) -> Vector2:
+	"""Convert maze cell coordinates to world position."""
+	var local_pos = tilemap.map_to_local(cell)
+	return tilemap.to_global(local_pos)
+
+func world_to_cell(world_pos: Vector2) -> Vector2i:
+	"""Convert world position to maze cell coordinates."""
+	var local_pos = tilemap.to_local(world_pos)
+	return tilemap.local_to_map(local_pos)
+
+func raycast_cells(origin: Vector2, destination: Vector2) -> Vector2i:
+	"""
+	Performs ray marching from origin to destination in world coordinates.
+	Returns the coordinates of the first filled (wall) cell encountered, or Vector2i(-1, -1) if no wall is hit.
+	Uses DDA (Digital Differential Analyzer) algorithm for grid traversal.
+	"""
+	var start_cell = world_to_cell(origin)
+	var end_cell = world_to_cell(destination)
+	
+	# Direction vector
+	var dx = end_cell.x - start_cell.x
+	var dy = end_cell.y - start_cell.y
+	
+	# Number of steps (use the larger dimension)
+	var steps = maxi(absi(dx), absi(dy))
+	
+	if steps == 0:
+		# Origin and destination are in the same cell
+		if is_cell_wall(start_cell):
+			return start_cell
+		return Vector2i(-1, -1)
+	
+	# Step increments
+	var x_inc = float(dx) / float(steps)
+	var y_inc = float(dy) / float(steps)
+	
+	# Current position (use floats for precision)
+	var x = float(start_cell.x)
+	var y = float(start_cell.y)
+	
+	# March through cells
+	for i in range(steps + 1):
+		var current_cell = Vector2i(roundi(x), roundi(y))
+		
+		# Check if this cell is a wall
+		if is_cell_wall(current_cell):
+			return current_cell
+		
+		# Move to next position
+		x += x_inc
+		y += y_inc
+	
+	return Vector2i(-1, -1)
+
+func is_cell_wall(cell: Vector2i) -> bool:
+	"""Check if a cell is a wall (filled). Returns true for walls, false for passages or out of bounds."""
+	# Out of bounds is considered not a wall (passage/empty space)
+	if cell.x < 0 or cell.x >= maze_width or cell.y < 0 or cell.y >= maze_height:
+		return false
+	
+	return maze[cell.x][cell.y] == WALL
+
+func remove_cell(cell: Vector2i) -> bool:
+	"""
+	Removes a cell (converts it to a passage) from both the internal maze matrix and the tilemap.
+	Returns true if the cell was successfully removed, false if the cell is out of bounds.
+	"""
+	# Check bounds
+	if cell.x < 0 or cell.x >= maze_width or cell.y < 0 or cell.y >= maze_height:
+		return false
+	
+	# Update internal maze matrix
+	maze[cell.x][cell.y] = PASSAGE
+	
+	# Remove tile from tilemap
+	tilemap.erase_cell(cell)
+	
+	# Update neighboring tiles to reflect the change
+	# Check all 8 neighbors and update their tiles if they are walls
+	for dx in range(-1, 2):
+		for dy in range(-1, 2):
+			if dx == 0 and dy == 0:
+				continue
+			
+			var neighbor = Vector2i(cell.x + dx, cell.y + dy)
+			
+			# Skip if neighbor is out of bounds (including border walls)
+			if neighbor.x < -1 or neighbor.x > maze_width or neighbor.y < -1 or neighbor.y > maze_height:
+				continue
+			
+			# Update the neighbor's tile if it's a wall
+			if is_wall(neighbor.x, neighbor.y):
+				var tile = get_tile_for_position(neighbor.x, neighbor.y)
+				tilemap.set_cell(neighbor, tile_source_id, tile)
+	
+	return true
 
 func _ready():
 	generate_maze()
@@ -75,8 +175,7 @@ func spawn_enemies() -> void:
 	# Spawn enemies at random free cells
 	for i in range(spawn_count):
 		var cell = free_cells[i]
-		var local_pos = tilemap.map_to_local(cell)
-		var world_pos = tilemap.to_global(local_pos)
+		var world_pos = cell_to_world(cell)
 		
 		var enemy: Node2D = enemy_scene.instantiate()
 		enemy.global_position = world_pos
@@ -252,7 +351,7 @@ func get_tile_for_position(x: int, y: int) -> Vector2i:
 			return tile_single_wall
 		# Single isolated tile: no walls above or below (rare case)
 		if not has_top and not has_bottom:
-			return tile_single_floor  # Default to floor for isolated case
+			return tile_single_cell  # Completely isolated single cell
 	
 	# Single-height floor detection (no walls above or below)
 	var is_single_height = not has_top and not has_bottom
@@ -267,6 +366,9 @@ func get_tile_for_position(x: int, y: int) -> Vector2i:
 		# Single height horizontal wall: walls both left and right
 		if has_left and has_right:
 			return tile_single_horizontal_wall
+		# Single isolated cell: no walls in any direction
+		if not has_left and not has_right:
+			return tile_single_cell
 	
 	# Corner detection (no adjacent walls on two perpendicular sides)
 	# Top-left corner: no wall above and no wall to the left
@@ -327,10 +429,7 @@ func teleport_player_to_start():
 	var start_cell = Vector2i(0, maze_height - 1)
 	
 	# Convert maze coordinates to world position
-	var local_pos = tilemap.map_to_local(start_cell)
-	
-	# Convert to global position
-	var global_pos = tilemap.to_global(local_pos)
+	var global_pos = cell_to_world(start_cell)
 	
 	# Teleport the player
 	World.teleport_player(global_pos)
@@ -341,8 +440,7 @@ func spawn_goal() -> void:
 
 	# Goal is at upper right corner
 	var exit_cell := Vector2i(maze_width - 1, 0)
-	var local_pos := tilemap.map_to_local(exit_cell)
-	var world_pos := tilemap.to_global(local_pos)
+	var world_pos := cell_to_world(exit_cell)
 	
 	var cell_size: Vector2 = tilemap.tile_set.tile_size
 	world_pos.x += cell_size.x*5

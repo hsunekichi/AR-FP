@@ -21,15 +21,13 @@ var current_state: State = State.NORMAL
 @export var MAX_FALL_SPEED: float = 500.0
 var gravity: float = 15 * World.ppu
 
-######### Dash Parameters #########
-@export var dash_speed: float = 800.0
-@export var dash_cooldown: float = 0.5
-var MAX_DASHED_DISTANCE: float = 2.0 * World.ppu
-var dash_direction: Vector2 = Vector2.ZERO
-var dashedDistance: float = 0.0
-var insideWall: bool = false
-var dash_detector: Area2D
-var dashTimer: Timer
+######### Sugar rush parameters #########
+@export var sugar_rush_cooldown: float = 0.5
+@export var sugar_rush_duration: float = 2.0
+var sugarRushCooldownTimer: Timer
+var sugarRushDurationTimer: Timer
+var sugarPuffScene: PackedScene = preload("res://Scenes/SugarPuff.tscn")
+var isRemovingCells: bool = false
 
 ######### Sitting Parameters #########
 @export var sit_time: float = 3.0
@@ -45,6 +43,7 @@ var moveInput: Vector2 = Vector2.ZERO
 @onready var animator: AnimationPlayer = $AnimationPlayer
 var rainbowPulseScene: PackedScene = preload("res://Scripts/SFX/RainbowPulse.tscn")
 var rainbowPulse: RainbowPulse
+@onready var rayDestructor: RayCast2D = $RayDestructor
 
 ######### Initialization #########
 func _ready() -> void:
@@ -56,27 +55,19 @@ func _ready() -> void:
 	add_child(sit_timer)
 	sit_timer.start()
 	
-	# Dash cooldown timer
-	dashTimer = Timer.new()
-	dashTimer.one_shot = true
-	dashTimer.wait_time = dash_cooldown
-	add_child(dashTimer)
+	# Sugar rush cooldown timer
+	sugarRushCooldownTimer = Timer.new()
+	sugarRushCooldownTimer.one_shot = true
+	sugarRushCooldownTimer.wait_time = sugar_rush_cooldown
+	add_child(sugarRushCooldownTimer)
 
-	# Dash collision detector
-	dash_detector = Area2D.new()
-	dash_detector.collision_layer = 0
-	dash_detector.collision_mask = 1  # Detect ground layer
-	dash_detector.monitoring = false
-	
-	for child in get_children():
-		if child is CollisionShape2D:
-			var shape_copy = CollisionShape2D.new()
-			shape_copy.shape = child.shape
-			shape_copy.position = child.position
-			dash_detector.add_child(shape_copy)
-			break
-	
-	add_child(dash_detector)
+	# Sugar rush duration timer
+	sugarRushDurationTimer = Timer.new()
+	sugarRushDurationTimer.one_shot = true
+	sugarRushDurationTimer.wait_time = sugar_rush_duration
+	sugarRushDurationTimer.timeout.connect(end_sugar_rush)
+	add_child(sugarRushDurationTimer)
+
 	visible = false
 
 	# Rainbow pulse effect
@@ -106,8 +97,6 @@ func _physics_process(delta: float) -> void:
 	match current_state:
 		State.SITTING:
 			_process_sitting_state()
-		State.DASHING:
-			_process_dashing_state(delta)
 		State.NORMAL:
 			_process_normal_state(delta)
 
@@ -128,26 +117,6 @@ func _process_sitting_state() -> void:
 
 	move_and_slide()
 
-######### State: DASHING #########
-func _process_dashing_state(delta: float) -> void:
-	global_position += dash_direction * dash_speed * delta
-	dashedDistance += dash_speed * delta
-	
-	var wasInsideWall = insideWall
-	insideWall = dash_detector.has_overlapping_bodies()
-
-	look_to(dash_direction.x)
-	
-	# Exit dash when out of wall or max distance reached
-	if (wasInsideWall or dashedDistance >= MAX_DASHED_DISTANCE) and not insideWall:
-		current_state = State.NORMAL
-		dash_detector.monitoring = false
-		dashTimer.start()
-
-		if moveInput.x != 0:
-			velocity = Vector2(moveInput.x * speed, 0)
-		else:
-			velocity = Vector2.ZERO
 
 ######### State: NORMAL #########
 func _process_normal_state(delta: float) -> void:
@@ -155,10 +124,13 @@ func _process_normal_state(delta: float) -> void:
 	if moveInput.x != 0 and is_on_floor():
 		sit_timer.start()
 	
-	# Check for dash input
-	if _try_start_dash():
-		return
+	# Start sugar rush
+	if Input.is_action_just_pressed("Dash") \
+	   and sugarRushCooldownTimer.is_stopped() \
+	   and sugarRushDurationTimer.is_stopped():
+		start_sugar_rush()
 	
+	_handle_sugar_rush()
 	_apply_propulsion(delta)
 	_apply_gravity(delta)
 	_apply_horizontal_movement(delta)
@@ -166,23 +138,41 @@ func _process_normal_state(delta: float) -> void:
 
 	move_and_slide()
 
-func _try_start_dash() -> bool:
-	if not Input.is_action_just_pressed("Dash"):
-		return false
-	if moveInput.x == 0 or not dashTimer.is_stopped():
-		return false
-	
-	var dir = Vector2(sign(moveInput.x), 0)
-	current_state = State.DASHING
-	dash_direction = dir
-	dash_detector.monitoring = true
-	dashedDistance = 0.0
-	sit_timer.stop()
-	disable_propulsion()
+func _handle_sugar_rush() -> void:
+	var maze_scene := World.get_maze()
+	if maze_scene == null or sugarRushDurationTimer.is_stopped() or isRemovingCells:
+		return
 
-	rainbowPulse.start_pulse(global_position)
+	var maze = maze_scene.get_node("MazeGenerator") as MazeGenerator
 
-	return true
+	var origin = rayDestructor.global_position
+	var target = rayDestructor.to_global(rayDestructor.target_position)
+
+	var col: Vector2i = maze.raycast_cells(origin, target)
+
+	if col[0] != -1:
+		var cell_pos = maze.cell_to_world(col)
+		var sugar_puff = sugarPuffScene.instantiate()
+		isRemovingCells = true
+		
+		sugar_puff.global_position = cell_pos
+		World.add_child(sugar_puff)
+
+		sugar_puff.cloudAtMaxSize.connect(func(): 
+			maze.remove_cell(col)
+			isRemovingCells = false
+		, CONNECT_ONE_SHOT)
+
+		sugar_puff.animation_finished.connect(sugar_puff.queue_free, CONNECT_ONE_SHOT)
+
+
+func start_sugar_rush() -> void:
+	sugarRushDurationTimer.start()
+	World.activate_sugar_rush_effect()
+
+func end_sugar_rush() -> void:
+	sugarRushCooldownTimer.start()
+	World.deactivate_sugar_rush_effect()
 	
 func _apply_propulsion(delta: float) -> void:
 	if Input.is_action_pressed("Jump"):
