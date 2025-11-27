@@ -1,10 +1,11 @@
-[gd_scene load_steps=21 format=3 uid="uid://b1igigbcqc3mq"]
+[gd_scene load_steps=22 format=3 uid="uid://b1igigbcqc3mq"]
 
 [ext_resource type="Script" uid="uid://leusnapulo60" path="res://Scripts/Game/HUDcontroller.gd" id="1_sd512"]
 [ext_resource type="Texture2D" uid="uid://xxwcqol0t2lu" path="res://Art/Deserts/DessertSpriteSheet_NOTOUTLINED.png" id="2_jo1ms"]
 [ext_resource type="Shader" uid="uid://bqdr545toe1mc" path="res://Scripts/SFX/SugarRush.gdshader" id="3_psnte"]
 [ext_resource type="Script" uid="uid://d0np1r4gub5y0" path="res://Scripts/SFX/SugarEffectController.gd" id="4_c3eba"]
 [ext_resource type="Shader" uid="uid://tj3yuby32lhv" path="res://Scripts/SFX/EatSugar.gdshader" id="4_s3jbq"]
+[ext_resource type="Script" uid="uid://ci8cue465f3yj" path="res://Scripts/SFX/StatDisplay.gd" id="6_0hk07"]
 [ext_resource type="Texture2D" uid="uid://d1qd6mqfeavgq" path="res://Art/Screens/MenuButton.png" id="6_g8s2e"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_psnte"]
@@ -12250,6 +12251,7 @@ offset_left = 266.0
 offset_top = 81.0
 offset_right = 306.0
 offset_bottom = 121.0
+script = ExtResource("6_0hk07")
 
 [node name="Icon" type="TextureRect" parent="HealthDisplay"]
 layout_mode = 1
@@ -12292,6 +12294,7 @@ offset_left = 266.0
 offset_top = 186.0
 offset_right = 306.0
 offset_bottom = 226.0
+script = ExtResource("6_0hk07")
 
 [node name="Icon" type="TextureRect" parent="SugarDisplay"]
 layout_mode = 1

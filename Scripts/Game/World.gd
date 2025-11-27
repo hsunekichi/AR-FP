@@ -11,6 +11,7 @@ var lose_menu_scene: PackedScene = preload("res://Scenes/MainScenes/LoseScene.ts
 var win_scene: PackedScene = preload("res://Scenes/MainScenes/WinScene.tscn")
 var maze_scene: PackedScene = preload("res://Scenes/MainScenes/Maze.tscn")
 var debug_scene: PackedScene = preload("res://Scenes/MainScenes/Debug.tscn")
+var controls_scene: PackedScene = preload("res://Scenes/MainScenes/ControlsScene.tscn")
 
 var scene_changing: bool = false
 
@@ -76,7 +77,7 @@ func _ready() -> void:
 
 	pulse_instance.set_parameters(pulse_size, pulse_duration, 1.0)
 
-	load_maze()	
+	load_menu()	
 
 func ray_intersects_ground(from: Vector2, to: Vector2) -> bool:
 	raycast.global_position = from
@@ -126,6 +127,9 @@ func change_scene(scene: PackedScene, scene_name: String = "", parent: Node = nu
 	await HUD.disable_transition()
 
 	scene_changing = false
+
+func load_controls() -> void:
+	change_scene(controls_scene, "", HUD)
 
 func load_menu() -> void:
 	change_scene(main_menu_scene, "", HUD)

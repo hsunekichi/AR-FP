@@ -4,6 +4,8 @@ extends CanvasLayer
 
 
 @onready var transition: Node = $Transition
+@onready var health_display: Node = $HealthDisplay
+@onready var sugar_display: Node = $SugarDisplay
 
 func _ready() -> void:
 	var tr_nodes = transition.get_children()
@@ -12,8 +14,11 @@ func _ready() -> void:
 	transition.visible = true
 	World.game_finished.connect(on_game_ended)
 
-	$HealthDisplay.visible = false
-	$SugarDisplay.visible = false
+	health_display.visible = false
+	sugar_display.visible = false
+
+	health_display.base_message = "Bob's energy: "
+	sugar_display.base_message = "Sugar level: "
 
 	$SugarRushEffect.total_duration = World.config_value("sugar_rush_duration", 2.0)
 	$EatSugarEffect.total_duration = 1.0
@@ -89,17 +94,14 @@ func disable_transition():
 		child.visible = false	
 
 func update_health(new_health: int) -> void:
-	var health = $HealthDisplay/Label
-	health.text = "Bob's energy: " + str(new_health)
+	health_display.set_value(new_health)
 
 func update_sugar_level(new_value: int) -> void:
-	var score = $SugarDisplay/Label
-	score.text = "Sugar level: " + str(new_value)
+	sugar_display.set_value(new_value)
 
 func show_hud() -> void:
-	$HealthDisplay.visible = true
-	$SugarDisplay.visible = true
-
+	health_display.visible = true
+	sugar_display.visible = true
 func on_game_ended() -> void:
-	$HealthDisplay.visible = false
-	$SugarDisplay.visible = false
+	health_display.visible = false
+	sugar_display.visible = false

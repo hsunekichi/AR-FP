@@ -358,7 +358,31 @@ with even more optimizations possible if needed.
 
 
 \section{Conclusions}\label{sec:conclusion}
-Practical work conclusions. Remember, it is part of your job to make us believe you deserve the maximum grade!!
+
+In this work we have implemented a complete navigation stack 
+for 2D videogame agents, combining a goal-agnostic RRT* global planner, 
+a trajectory follower, a discretized Nearness Diagram local controller, 
+and a simple low-level movement layer. The system is fully integrated 
+in Godot and drives non-player characters in a small platformer, where 
+agents must navigate a maze-like environment that can change over time 
+as the player opens new passages.
+
+The proposed RRT* variant grows a single tree in continuous space, supports 
+rapid replanning, and can extract paths to arbitrary targets without rebuilding 
+the structure from scratch. The trajectory follower turns these paths into 
+short-horizon targets, while the ND controller refines motion locally 
+using a small set of proximity rays, hysteresis for stability, and 
+repulsion forces to slide around nearby obstacles. Together, these 
+components keep the global planner lightweight, offloading fine 
+collision avoidance and corner cases to the local layer.
+
+Experiments in hand-crafted and procedurally generated mazes show 
+that the system finds valid routes within a few seconds while staying 
+within a tight per-frame budget, even with dozens of agents running 
+simultaneously. The combination of sampling-based planning, discrete 
+ND control and simple low-level actuation yields motion that is responsive, 
+smooth and robust to dynamic changes, providing a usable navigation 
+solution for videogame scenarios without sacrificing performance or designer control.
 
 \appendix
 \label{sec:appendix}
