@@ -318,27 +318,15 @@ sampling to randomly find the new opened spot).
 
 \subsection{Performance testing}\label{sec:performance}
 
-Figure \ref{fig:profiler} shows the Godot profiler when running the demo maze.
-The navigation pipeline takes around 1ms per frame, mostly inside
+The navigation pipeline takes around 0.6ms per frame, mostly inside
 the get-k-nearest function. This is a heavily algorithmic function 
-with a high penalty coming from GDscript's interpreted nature. 
+with a significant penalty coming from GDscript's interpreted nature. 
 
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=0.6\columnwidth]{Images/profiler.png}
-    \caption{Godot profiler when running the demo maze.
-    }
-    \label{fig:profiler}
-\end{figure}
+Even with that, in the test scene completely remains stable 
+even when new paths are opened dynamically, without significant 
+latency spikes and always under 1ms of total script execution per frame.
 
-Figure \ref{fig:profiler} shows a spike around the half of the timeline, which corresponds to
-the opening of a new path while the agent is too far from the origin, triggering a new
-tree rebuild.
-
-The same code written in C++ runs around 10x faster, resulting in an 
-average of just 0.1ms per frame. This code has not been 
-included in the final release due to the complexity of 
-cross-compiling C++ modules to different platforms.
+\subsection{Load testing}\label{sec:load_testing}
 
 
 \section{Conclusions}\label{sec:conclusion}
