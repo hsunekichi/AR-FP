@@ -220,7 +220,6 @@ func on_hit() -> bool:
 	
 	health -= 1
 	World.health_changed(health)
-	print(health)
 
 	if health <= 0:
 		World.game_over()

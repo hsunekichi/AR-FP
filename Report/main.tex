@@ -328,6 +328,34 @@ latency spikes and always under 1ms of total script execution per frame.
 
 \subsection{Load testing}\label{sec:load_testing}
 
+To test the navigation pipeline under load, a scene with 50 agents
+inside a procedurally generated 30x20 maze is used. The number of points
+generated per frame by RTT* is reduced to 3 to maintain performance,
+at the cost of increasing the time needed to find a path.
+
+The scene runs mostly at 144fps, although the frame time 
+(figure \ref{fig:frameTime}) remains unstable due
+to the high number of agents querying the navigation pipeline simultaneously.
+Most of the time is spent again inside the get-k-nearest function,
+so a C++ implementation would significantly improve stability.
+Even with that, the frame time consistently remains around or under 16ms.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\columnwidth]{Images/profiler.png}
+    \caption{Frame time of the execution with 50 agents navigating simultaneously.
+    The red line marks 16ms, the budget for 60fps.
+    }
+    \label{fig:frameTime}
+\end{figure}
+
+In any case, 50 agents are a lot for this kind of videogames,
+and videogames with significantly more agents (1000+) usually use 
+much simpler systems due to other limitations.
+
+Because of that the navigation pipeline is considered to perform well under load,
+with even more optimizations possible if needed. 
+
 
 \section{Conclusions}\label{sec:conclusion}
 Practical work conclusions. Remember, it is part of your job to make us believe you deserve the maximum grade!!
