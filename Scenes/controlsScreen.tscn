@@ -22,10 +22,10 @@ texture = ExtResource("1_ui1nf")
 
 [node name="CloseButton" parent="." instance=ExtResource("2_abfgx")]
 layout_mode = 0
-offset_left = 577.0
-offset_top = 920.0
-offset_right = 1355.0
-offset_bottom = 1019.0
+offset_left = 566.0
+offset_top = 930.0
+offset_right = 1344.0
+offset_bottom = 1029.0
 theme_override_colors/font_focus_color = Color(0.4509804, 0.15686275, 0.050980393, 1)
 text = "Close"
 icon = ExtResource("3_j56jd")
