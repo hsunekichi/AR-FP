@@ -18,6 +18,7 @@
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
     
 \setlength{\tabcolsep}{0.4em}
+\setlength{\parskip}{0.5em}
 
 
 %%%%% PARA LINKAR REFSSSSS %%%%%
@@ -61,11 +62,19 @@ controllable and expressive enough to support artistic and level-design goals,
 so that designers and artists can obtain plausible, cinematic movement 
 without manually scripting every trajectory. 
 
-Classical pipelines rely on graph-based representations, such as navigation meshes or waypoint graphs, 
+Classical pipelines rely on graph-based representations (figure \ref{fig:godot_navmesh}), such as navigation meshes or waypoint graphs, 
 and search algorithms like A*, which require a carefully constructed graph discretizing the free space.
 In practice, these graphs are often built or curated by level designers, a tedious and error-prone 
 process that is difficult to maintain in large or dynamic worlds. Automatic graph construction is 
 possible but complex, hard to adapt in real time, and challenging to tune for artistic or gameplay requirements. 
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\columnwidth]{Images/GodotNavigation.jpeg}
+    \caption{Example of a graph navigation mesh in Godot Engine \cite{godot_navigation}.
+    }
+    \label{fig:godot_navmesh}
+\end{figure}
 
 As an alternative, robotics research has developed plenty of methods that operate directly in continuous space, 
 such as sampling-based planners and reactive navigation. However, many navigation pipelines designed for robotics
@@ -80,9 +89,27 @@ algorithm acts as the global planner, computing collision-free paths in continuo
 efficient discretized holonomic ND controller serves as the local planner. Together, they provide a flexible, 
 real-time navigation stack suitable for dynamic videogame scenarios.
 
-A demo level has been created to test and show the capabilities of the system, featuring moving obstacles
-and dynamic goals. It is fully implemented in GDscript (a python-like language), allowing easy deployment and modification, 
+\subsection{Bob in the candyland}
+
+To showcase the navigation pipeline, a simple videogame has been created (figure \ref{fig:candyland_menu}).
+It consists on a 2D platformer where Bob the triceratops (the player) has to navigate through a 
+procedurally generated candy maze to reach the end. The maze has bat enemies (agents) that pursue the player 
+using the navigation pipeline described in this report.
+
+To make the challenge more interesting the player has a special ability that destroys
+walls to create new paths in the maze, making it a dynamic environment.
+
+In adition, it also includes a debug level to used in this report to test and visualize the navigation pipeline.
+It is fully implemented in GDscript (a python-like language), allowing easy deployment and modification, 
 and can be downloaded here [Insert url].
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\columnwidth]{Images/CandylandMenu.png}
+    \caption{Main menu of Bob in the candyland.
+    }
+    \label{fig:candyland_menu}
+\end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%           
@@ -91,7 +118,8 @@ and can be downloaded here [Insert url].
 
 \subsection{The navigation pipeline}\label{sec:pipeline}
 
-The system is built on top of the Godot game engine, which offers the physics and rendering capabilites needed for the simulation.
+The system is built on top of the Godot game engine \cite{godot_engine}, 
+which offers the physics and rendering capabilites needed for the simulation.
 The navigation pipeline consists on multiple components that interact with Godot to mimic the whole robotic navigation stack.
 
 \begin{itemize}            
@@ -119,14 +147,22 @@ The key design choice is goal-agnostic tree growth: each new sample is inserted 
 the parent that minimizes cumulative cost from the root (the agent's current start), and only 
 this root cost is stored. No heuristic or explicit goal-directed information is maintained during expansion, reducing bias and simplifying rewiring.
 
-To obtain a path to any reachable target, we locate the best parent for that target 
-and backtrack parent links to the root, yielding the current minimum-cost route known by the current tree.
+To obtain a path to any reachable target, the tree locates the best parent for that target 
+and backtracks parent links up to the root, yielding the current minimum-cost route known currently.
 This allows to quickly extract paths to arbitrary goals without re-growing the tree, which is crucial to track dynamic targets.
 
-During execution the agent's position diverges from the tree root, so when an unreachable path emerges or dynamic obstacles invalidate part of the current route 
-the tree is rebuilt from the current agent's position. Continuous sampling naturally discovers detours around moving obstacles; 
-while full rebuilds are triggered when the tree exceeds a size threshold or connectivity becomes unreliable. 
-This strategy preserves responsiveness without the overhead of maintaining a designer-built navigation graph.
+During execution the agent's position diverges from the tree root, so when an unreachable path 
+emerges or dynamic obstacles invalidate part of the current route the tree needs to be rebuilt from 
+the current agent's position.
+
+[Figure of the RTT* display]
+
+\subsection{Dynamic obstacles}
+In dynamic environments, continuous sampling allows to naturally discover new paths that were not previously available.
+To allow doing that even with a filled tree, the planner allows to temporarily increase the tree size limit 
+when a dynamic environment update is detected.
+
+If the path becomes invalid due to a moving obstacle, the local planner will need to adjust or query a full global replan.
 
 \subsection{Collision checking}
 
@@ -145,15 +181,20 @@ the kinematic constraints of the agent.
 
 To ensure real-time performance, several optimizations are implemented:
 \begin{itemize}
+    \item \textbf{Sparse sampling:} When a sample is generated too close to an existing node, it is discarded and a new sample is generated.
+            This prevents the tree from growing too dense in small areas, which would increase computation time without improving path quality.
+            However, this threshold must be small enough to allow the tree to explore narrow passages.
     \item \textbf{Efficient nearest neighbor search:} A k-d tree structure is used to allow fast nearest neighbor queries during tree expansion. 
             It was adapted from \cite{geeksforgeeks_kdtree} to work with Godot's Vector2 class.
     \item \textbf{K-nearest rewiring:} When a new node is added, only the k-nearest neighbors are considered for rewiring, limiting computational overhead to a fixed amount. However
             this directly limits the quality of the path found, in comparison to considering all nodes within a radius. It is a direct trade-off between performance and optimality. 
-    \item \textbf{Efficient sampling:} Samples are generated uniformly within a disk around the agent and the current goal, focusing exploration on relevant areas. The size of the disk is configurable,
+    \item \textbf{Adaptive sampling:} Samples are generated uniformly within a disk around the agent and the current goal, focusing exploration on relevant areas. The size of the disk is configurable,
           which directly affects the convergence speed. If the path goes outside the disk it will never be found, so the disk could by automatically increased if no path is found after some time.
     \item \textbf{Quick start:} Each time the tree is rebuilt, a large number of samples is generated to quickly find an initial path. 
             Each new sample tests the goal, so the process stops as soon as a path is found. Then, subsequent refinements will use fewer samples to optimize the existing tree in a goal-agnostic way.
             This helps to reduce the frame-time budget used by the planner while still providing fast responsiveness of the agent's movement.
+    \item \textbf{Tree size limit:} To prevent the tree from growing indefinitely, a maximum size is enforced. 
+            When the limit is reached, the tree is rebuilt from the agent's current position. This ensures that the planner remains responsive and does not degrade over time.
 \end{itemize}
 
 \section{Trajectory following}\label{sec:lowlevel}
@@ -167,6 +208,8 @@ even when the agent is outside the path.
 
 In the corner case where the agent is already at the computed target, 
 the next segment is directly selected to prevent getting stuck at it.
+
+[Figure of a trajectory, the selected segment and the target point]
 
 \section{Local planner: Discretized nearness diagram}\label{sec:ND}
 
@@ -204,6 +247,8 @@ the sensing radius. This produces a smooth fleeing force stronger near closer wa
 The final steering direction is the normalized sum of the valley heading unit vector 
 and the accumulated repulsion. The result is a smooth, goal-oriented motion that
 moves around immediate obstacles without abrupt changes in direction.
+
+[Figure with ND rays + goal, an obstacle, the selected valley, the repulsion vectors and the final direction]
 
 This reactive layer complements the global RRT* planner: the global module supplies 
 a path in continuous space; the agent's controller decides which sub-point to follow,
@@ -250,7 +295,7 @@ Practical work conclusions. Remember, it is part of your job to make us believe 
 
 \subsection{Project structure}
 
-The project has two main folders: Scripts/Actors and Scripts/Navigation.
+The navigation pipeline has two main folders:
 
 \begin{itemize}
     \item \textbf{Scripts/Actors:} Contains all the scripts related to the agents in the scene. 
@@ -262,10 +307,6 @@ The project has two main folders: Scripts/Actors and Scripts/Navigation.
         All of them are combined inside Bat.gd, which queries a global path, computes a target from the trajectory,
         feeds it to the local planner and finally executes its movement commands and handles the animations.
 \end{itemize}
-
-Player and World are configured as Autoloads, so they are automatically 
-loaded as global Singletons when the game starts. Other bats can be added 
-to the scene by just dragging Scenes/bat.tscn into the main scene.
 
 The rest of the project contains an Art folder with the sprites used, 
 World.gd which provides global convenience logic, Scenes which 

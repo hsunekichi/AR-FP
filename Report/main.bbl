@@ -20,7 +20,13 @@
 \providecommand{\BIBdecl}{\relax}
 \BIBdecl
 
+\bibitem{godot_navigation}
+{Godot Engine}, ``Navigation in godot,'' \url{https://docs.godotengine.org/en/stable/tutorials/navigation/navigation_introduction_2d.html}.
+
+\bibitem{godot_engine}
+------, ``Godot engine web page,'' \url{https://godotengine.org/}.
+
 \bibitem{geeksforgeeks_kdtree}
-{GeeksforGeeks}, ``Search and insertion in k-dimensional tree (kd-tree),'' \url{https://www.geeksforgeeks.org/dsa/search-and-insertion-in-k-dimensional-tree/}, accessed: 20 Nov 2025.
+{GeeksforGeeks}, ``Search and insertion in k-dimensional tree (kd-tree),'' \url{https://www.geeksforgeeks.org/dsa/search-and-insertion-in-k-dimensional-tree/}.
 
 \end{thebibliography}

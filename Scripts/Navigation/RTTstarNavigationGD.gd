@@ -5,10 +5,14 @@ extends Node
 
 var MAX_NEIGHBORS: int = 5 ## Maximum number of neighbors to consider when connecting a new point, controls efficiency and optimality of paths
 var SAMPLE_DISTANCE_MULTIPLIER: float = 2.0 ## Multiplier for the sampling disk around the actor and goal. 1 means the circle will pass through each of them
+var MIN_SAMPLE_DISTANCE: float = 0.45 * World.ppu ## Minimum distance to consider a neighbor valid when connecting a new point
 
 var MAX_TREE_SIZE: int = 1500 ## Maximum number of nodes in the RTT* tree
 var TREE_BUILD_SAMPLES: int = 30 ## Maxumum number of samples to generate when building a new tree. If a path is found earlier, the process stops
 var TREE_REFINE_SAMPLES: int = 5 ## Number of samples to generate when refining an existing tree
+
+var MAX_TREE_BASE_SIZE: int = 500
+var _tree_limit: int = MAX_TREE_BASE_SIZE
 
 ## Returns a trajectory from the origin to the target, optimized for the current position.
 ##  The trajectory may not be reachable from the current position, in which case the caller 
@@ -23,7 +27,7 @@ func generate_trajectory(current_position: Vector2, goal: Vector2) -> PackedVect
 	var path := build_path(goal, MAX_NEIGHBORS)
 	
 	# Tree is full but no path found, reset
-	if path.is_empty() and _tree.size() == MAX_TREE_SIZE:
+	if path.is_empty() and _tree.size() == _tree_limit:
 		restart(current_position)
 		# We should now rebuild the tree, but we leave it for the next call
 		#  to not overload the current frame
@@ -39,6 +43,9 @@ func restart(origin: Vector2) -> void:
 	if _tree_display:
 		_tree_display.clear_markers()	
 
+func increase_tree_limit(amount: int) -> void:
+	_tree_limit = min(_tree_limit + amount, MAX_TREE_SIZE)
+
 
 func _build_new_tree(origin: Vector2, goal: Vector2):
 	restart(origin)
@@ -46,20 +53,20 @@ func _build_new_tree(origin: Vector2, goal: Vector2):
 	# Generate many samples to favor a quick path, but stop as soon as the goal is reached
 	_generate_samples(origin, goal, TREE_BUILD_SAMPLES, true)
 	World.log("Built new RTT* tree with ", _tree.size(), " nodes towards ", goal)
-	
+
 
 func _generate_samples(origin: Vector2, goal: Vector2, nSamples: int, stop_on_goal: bool) -> void:
 	# Expand the tree until finished
 	for i in range(nSamples):
 		# Safety to prevent too large trees
-		if _tree.size() >= MAX_TREE_SIZE:
+		if _tree.size() >= _tree_limit:
 			return
 
 		# Generate a new point
 		var sample_point := _sample_point(origin, goal)
-		_insert_point(sample_point)
+		var cost := _insert_point(sample_point)
 
-		if stop_on_goal and not World.ray_intersects_ground(sample_point, goal):
+		if cost != INF and stop_on_goal and not World.ray_intersects_ground(sample_point, goal):
 			return
 
 
@@ -80,6 +87,9 @@ func _sample_point(origin: Vector2, goal: Vector2) -> Vector2:
 func _insert_point(point: Vector2) -> float:
 	var nearest := _tree.get_k_nearest(point, MAX_NEIGHBORS)
 
+	if _tree.get_point(nearest[0]).distance_to(point) < MIN_SAMPLE_DISTANCE:
+		return INF # Too close to existing point
+
 	buff_parent_cost.resize(nearest.size())
 	buff_is_connected.resize(nearest.size())
 
@@ -95,7 +105,8 @@ func _insert_point(point: Vector2) -> float:
 
 		# Connect the point to its closest neighbor based on accumulated distance
 		buff_parent_cost[i] = _tree.compute_cost(idx) # Distance from root to point idx
-		var total_distance: float = buff_parent_cost[i] + _tree.get_point(idx).distance_to(point)
+		var distance := _tree.get_point(idx).distance_to(point)
+		var total_distance: float = buff_parent_cost[i] + distance
 
 		if total_distance < new_distance:
 			new_distance = total_distance

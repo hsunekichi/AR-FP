@@ -136,7 +136,6 @@ func get_maze() -> Node:
 
 func load_debug() -> void:
 	var initialize_player = func():
-		HUD.remove_menu()
 		HUD.show_hud()
 		Player.initialize()
 	change_scene(debug_scene, "", self, initialize_player)

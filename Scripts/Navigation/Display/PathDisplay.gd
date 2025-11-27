@@ -42,6 +42,11 @@ func add_position(pos: Vector2) -> void:
 	_create_single_marker(pos, positions.size() - 1)
 
 
+func remove_position(pos: Vector2) -> void:
+	var index = positions.find(pos)
+	if index != -1:
+		remove_marker(index)
+
 ## Clear all markers
 func clear_markers() -> void:
 	for marker in _marker_nodes:

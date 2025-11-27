@@ -90,6 +90,7 @@ func initialize() -> void:
 	disable_propulsion()
 	current_state = State.SITTING
 	animator.play("SitIdle")
+	velocity = Vector2.ZERO
 
 	enable_input()
 
