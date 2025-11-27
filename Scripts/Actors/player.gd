@@ -29,6 +29,10 @@ var sugarRushDurationTimer: Timer
 var sugarPuffScene: PackedScene = preload("res://Scenes/GameAssets/SugarPuff.tscn")
 var isRemovingCells: bool = false
 
+######### Invincibility parameters #########
+@export var invincibility_duration: float = 0.5
+var invincibility_timer: Timer
+
 ######### Sitting Parameters #########
 @export var sit_time: float = 5.0
 var sit_timer: Timer
@@ -37,6 +41,7 @@ var sit_timer: Timer
 var isPropulsing: bool = false
 var health: int = 3
 var sugar_level: int = 0
+var is_invincible: bool = false
 
 ######### Input #########
 var moveInput: Vector2 = Vector2.ZERO
@@ -70,6 +75,13 @@ func _ready() -> void:
 	sugarRushDurationTimer.wait_time = sugar_rush_duration
 	sugarRushDurationTimer.timeout.connect(end_sugar_rush)
 	add_child(sugarRushDurationTimer)
+
+	# Invincibility timer
+	invincibility_timer = Timer.new()
+	invincibility_timer.one_shot = true
+	invincibility_timer.wait_time = invincibility_duration
+	invincibility_timer.timeout.connect(func(): is_invincible = false)
+	add_child(invincibility_timer)
 
 	visible = false
 
@@ -197,14 +209,24 @@ func _handle_sugar_rush() -> void:
 
 		sugar_puff.animation_finished.connect(sugar_puff.queue_free, CONNECT_ONE_SHOT)
 
-func on_hit() -> void:
+func on_hit() -> bool:
+	# Prevent consecutive hits
+	if is_invincible:
+		return false
+	
+	# Activate invincibility
+	is_invincible = true
+	invincibility_timer.start()
+	
 	health -= 1
 	World.health_changed(health)
+	print(health)
+
 	if health <= 0:
 		World.game_over()
 	else:
 		if not World.get_maze():
-			return
+			return true
 		var maze := World.get_maze() as MazeGenerator
 		maze.spawn_enemies()
 
@@ -212,6 +234,8 @@ func on_hit() -> void:
 		animator.play("SitIdle")
 		velocity = Vector2.ZERO
 		global_position = maze.get_start_position()
+
+	return true
 
 
 

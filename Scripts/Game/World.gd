@@ -23,7 +23,7 @@ var config: Dictionary = {}
 var HUD: HUDcontroller
 
 var current_scene: Node = null
-var show_navigation: bool = true
+var show_navigation: bool = false
 
 signal game_finished
 
@@ -76,7 +76,7 @@ func _ready() -> void:
 
 	pulse_instance.set_parameters(pulse_size, pulse_duration, 1.0)
 
-	load_debug()	
+	load_maze()	
 
 func ray_intersects_ground(from: Vector2, to: Vector2) -> bool:
 	raycast.global_position = from

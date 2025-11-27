@@ -79,8 +79,8 @@ func _go_to_trajectory(new_path: PackedVector2Array) -> int:
 
 func actor_collision(body: Node2D) -> void:
 	if body.is_in_group("Player"):
-		World.emit_pulse(Player.target_point())
-		Player.on_hit()
+		if Player.on_hit():
+			World.emit_pulse(Player.target_point())
 		
 func environment_change() -> void:
 	navigation.increase_tree_limit(100)
