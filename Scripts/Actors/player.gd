@@ -132,6 +132,7 @@ func increase_sugar(amount: int = 1) -> void:
 	sugar_level += amount
 	World.sugar_level_changed(sugar_level)
 	World.activate_sugar_eat_effect()
+	$DonutSFX.play()
 
 
 ######### Main Physics Loop #########
@@ -241,6 +242,7 @@ func on_hit() -> bool:
 		global_position = maze.get_start_position()
 		
 	$DamageSFX.play()
+	$JetPackSFX.stop()
 
 	return true
 
@@ -252,6 +254,8 @@ func start_sugar_rush() -> void:
 
 	sugarRushDurationTimer.start()
 	World.activate_sugar_rush_effect()
+	
+	$SugarSFX.play()
 
 func end_sugar_rush() -> void:
 	sugarRushCooldownTimer.start()
@@ -265,7 +269,11 @@ func _apply_propulsion(delta: float) -> void:
 		var accel_y := propulsor_acceleration * delta
 		
 		velocity.y = move_toward(velocity.y, target_velocity_y, accel_y)
+		
+		if not $JetPackSFX.is_playing():
+			$JetPackSFX.play()
 	else:
+		$JetPackSFX.stop()
 		disable_propulsion()
 
 func _apply_gravity(delta: float) -> void:

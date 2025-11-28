@@ -1,4 +1,4 @@
-[gd_scene load_steps=69 format=3 uid="uid://blblagmxq7g6t"]
+[gd_scene load_steps=72 format=3 uid="uid://blblagmxq7g6t"]
 
 [ext_resource type="Script" uid="uid://bg7axshfnux2t" path="res://Scripts/Actors/player.gd" id="1_x3wgy"]
 [ext_resource type="Texture2D" uid="uid://q5cyhqdmdo14" path="res://Art/Dino Tri/dino_tri_idle.png" id="2_3smsa"]
@@ -8,6 +8,9 @@
 [ext_resource type="Texture2D" uid="uid://8vhlvjbwdary" path="res://Art/Dino Tri/dino_tri_move.png" id="6_gymyn"]
 [ext_resource type="Texture2D" uid="uid://c3jclt5y5wkl6" path="res://Art/Pixel Fire Asset Pack v2.2/Pixel Fire Asset Pack  Floored/Pixel Fire Asset Pack Floored Red/Group 4 - 1/Group 4 - 1.png" id="7_3smsa"]
 [ext_resource type="AudioStream" uid="uid://c606c1aheajap" path="res://Art/SFX/damaged.mp3" id="8_5t2qs"]
+[ext_resource type="AudioStream" uid="uid://cxfghu3aic4d1" path="res://Art/SFX/sugarRush.mp3" id="9_adsw7"]
+[ext_resource type="AudioStream" uid="uid://dlghyg8aly55x" path="res://Art/SFX/jetpack.mp3" id="9_x8w73"]
+[ext_resource type="AudioStream" uid="uid://clvxjwdgoqv52" path="res://Art/SFX/DonutSound.mp3" id="10_6qpeh"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cm0pq"]
 atlas = ExtResource("2_3smsa")
@@ -679,3 +682,13 @@ position = Vector2(0, 45)
 
 [node name="DamageSFX" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("8_5t2qs")
+
+[node name="SugarSFX" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("9_adsw7")
+
+[node name="JetPackSFX" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("9_x8w73")
+volume_db = -26.252
+
+[node name="DonutSFX" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("10_6qpeh")
