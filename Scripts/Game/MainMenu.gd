@@ -33,4 +33,3 @@ func _on_play_debug() -> void:
 
 func _on_play_controls() -> void:
 	World.load_controls()
-

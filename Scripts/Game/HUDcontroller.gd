@@ -1,8 +1,6 @@
 class_name HUDcontroller
 extends CanvasLayer
 
-
-
 @onready var transition: Node = $Transition
 @onready var health_display: Node = $HealthDisplay
 @onready var sugar_display: Node = $SugarDisplay
@@ -17,8 +15,7 @@ func _ready() -> void:
 	health_display.visible = false
 	sugar_display.visible = false
 
-	health_display.base_message = "Bob's energy: "
-	sugar_display.base_message = "Sugar level: "
+	$SugarDisplay/Label.text = "Sugar level: "
 
 	$SugarRushEffect.total_duration = World.config_value("sugar_rush_duration", 2.0)
 	$EatSugarEffect.total_duration = 1.0
@@ -99,23 +96,19 @@ func disable_transition():
 		child.visible = false	
 
 func update_health(new_health: int) -> void:
-<<<<<<< Updated upstream
-	health_display.set_value(new_health)
-=======
 	var lives_container := $HealthDisplay/HBoxContainer
 	var lives := lives_container.get_children()
 
 	for i in range(lives.size()):
 		lives[i].visible = i < new_health
 
->>>>>>> Stashed changes
-
 func update_sugar_level(new_value: int) -> void:
-	sugar_display.set_value(new_value)
+	$SugarDisplay/Label.text = "Sugar level: " + str(new_value)
 
 func show_hud() -> void:
 	health_display.visible = true
 	sugar_display.visible = true
+
 func on_game_ended() -> void:
 	health_display.visible = false
 	sugar_display.visible = false
