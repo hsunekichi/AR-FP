@@ -239,6 +239,8 @@ func on_hit() -> bool:
 		animator.play("SitIdle")
 		velocity = Vector2.ZERO
 		global_position = maze.get_start_position()
+		
+	$DamageSFX.play()
 
 	return true
 

@@ -9,6 +9,7 @@ func _ready() -> void:
 	add_child(player)
 	player.autoplay = false
 	player.finished.connect(_on_player_finished)
+	player.volume_db = -25
 
 func _on_player_finished() -> void:
 	player.play()
