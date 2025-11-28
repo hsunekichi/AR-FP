@@ -8,45 +8,45 @@ var isRunning: bool = false
 var timer: Timer = null
 
 func _ready() -> void:
-    visible = false
+	visible = false
 
-    timer = Timer.new()
-    timer.one_shot = true
-    timer.wait_time = total_duration
-    timer.timeout.connect(disable)
-    add_child(timer)
+	timer = Timer.new()
+	timer.one_shot = true
+	timer.wait_time = total_duration
+	timer.timeout.connect(disable)
+	add_child(timer)
 
 func set_duration(duration: float) -> void:
-    total_duration = duration
-    timer.wait_time = total_duration
+	total_duration = duration
+	timer.wait_time = total_duration
 
 func enable() -> void:
-    if isRunning:
-        timer.start()
-        return
+	if isRunning:
+		timer.start()
+		return
 
-    var mat = material as ShaderMaterial
+	var mat = material as ShaderMaterial
 
-    visible = true
+	visible = true
 
-    # Remove current alpha
-    mat.set_shader_parameter("alpha", 0.0)
+	# Remove current alpha
+	mat.set_shader_parameter("alpha", 0.0)
 
-    # Fade in from 0 to sugar_rush_alpha
-    var tween = create_tween()
-    tween.tween_property(mat, "shader_parameter/alpha", alpha, fade_duration)
+	# Fade in from 0 to sugar_rush_alpha
+	var tween = create_tween()
+	tween.tween_property(mat, "shader_parameter/alpha", alpha, fade_duration)
 
-    isRunning = true
+	isRunning = true
 
-    # Start timer to disable effect after total_duration
-    timer.start()
+	# Start timer to disable effect after total_duration
+	timer.start()
 
 func disable() -> void:
-    var mat = material as ShaderMaterial
+	var mat = material as ShaderMaterial
 
-    # Fade out from current alpha to 0
-    var tween = create_tween()
-    tween.tween_property(mat, "shader_parameter/alpha", 0.0, fade_duration)  
-    tween.finished.connect(func(): visible = false, CONNECT_ONE_SHOT)
+	# Fade out from current alpha to 0
+	var tween = create_tween()
+	tween.tween_property(mat, "shader_parameter/alpha", 0.0, fade_duration)  
+	tween.finished.connect(func(): visible = false, CONNECT_ONE_SHOT)
 
-    isRunning = false
+	isRunning = false

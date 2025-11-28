@@ -215,6 +215,7 @@ func _handle_sugar_rush() -> void:
 		, CONNECT_ONE_SHOT)
 
 		sugar_puff.animation_finished.connect(sugar_puff.queue_free, CONNECT_ONE_SHOT)
+		$WallSFX.play()
 
 func on_hit() -> bool:
 	# Prevent consecutive hits
