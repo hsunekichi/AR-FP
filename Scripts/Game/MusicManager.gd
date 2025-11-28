@@ -3,7 +3,9 @@ extends Node
 @onready var player: AudioStreamPlayer = AudioStreamPlayer.new()
 
 const MENU_MUSIC = preload("res://Art/Music/Donut Dreams.mp3")
-const GAME_MUSIC = preload("res://Art/Music/The Donut Dash.mp3")
+const GAME_MUSIC_EASY = preload("res://Art/Music/The Donut Dash.mp3")
+const GAME_MUSIC_MEDIUM = preload("res://Art/Music/Bob's Sweet Escape.mp3")
+const GAME_MUSIC_HARD = preload("res://Art/Music/Candy Escape.mp3")
 
 func _ready() -> void:
 	add_child(player)
@@ -20,6 +22,19 @@ func play_menu_music():
 		player.play()
 
 func play_game_music():
-	if player.stream != GAME_MUSIC:
-		player.stream = GAME_MUSIC
-		player.play()
+	var difficulty = World.get_difficulty()
+	
+	print(difficulty)
+	
+	if difficulty == "easy":
+		if player.stream != GAME_MUSIC_EASY:
+			player.stream = GAME_MUSIC_EASY
+			player.play()
+	elif difficulty == "medium":
+		if player.stream != GAME_MUSIC_MEDIUM:
+			player.stream = GAME_MUSIC_MEDIUM
+			player.play()
+	elif difficulty == "hard":
+		if player.stream != GAME_MUSIC_HARD:
+			player.stream = GAME_MUSIC_HARD
+			player.play()
