@@ -3,6 +3,8 @@
 [ext_resource type="Texture2D" uid="uid://dnsy41lnnrkp0" path="res://Art/Dino Tri/health.png" id="1_4i36w"]
 
 [node name="LifeOne" type="TextureRect"]
-custom_minimum_size = Vector2(128, 128)
+custom_minimum_size = Vector2(95, 128)
+offset_right = 90.0
+offset_bottom = 128.0
 texture = ExtResource("1_4i36w")
 expand_mode = 1
