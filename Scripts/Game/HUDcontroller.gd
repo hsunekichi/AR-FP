@@ -1,9 +1,12 @@
 class_name HUDcontroller
 extends CanvasLayer
 
+@export var life_scene: PackedScene
+@export var sugar_scene: PackedScene
+
 @onready var transition: Node = $Transition
-@onready var health_display: Node = $HealthDisplay
-@onready var sugar_display: Node = $SugarDisplay
+@onready var health_display: Node = $HealthDisplay/HBoxContainer
+@onready var sugar_display: Node = $SugarDisplay/HBoxContainer
 @onready var pause_menu: Control = $PauseMenu
 
 func _ready() -> void:
@@ -97,17 +100,37 @@ func disable_transition():
 
 func update_health(new_health: int) -> void:
 	var lives_container := $HealthDisplay/HBoxContainer
-	var lives := lives_container.get_children()
-
-	for i in range(lives.size()):
-		lives[i].visible = i < new_health
+	var current_lives := lives_container.get_child_count()
+	
+	# Remove excess lives
+	while current_lives > new_health:
+		var child = lives_container.get_child(current_lives - 1)
+		lives_container.remove_child(child)
+		child.queue_free()
+		current_lives -= 1
+	
+	# Add missing lives
+	while current_lives < new_health:
+		var life_instance = life_scene.instantiate()
+		lives_container.add_child(life_instance)
+		current_lives += 1
 
 func update_sugar_level(new_value: int) -> void:
 	var sugar_container := $SugarDisplay/HBoxContainer
-	var sugar := sugar_container.get_children()
-
-	for i in range(sugar.size()):
-		sugar[i].visible = i < new_value
+	var current_sugar := sugar_container.get_child_count()
+	
+	# Remove excess sugar icons
+	while current_sugar > new_value:
+		var child = sugar_container.get_child(current_sugar - 1)
+		sugar_container.remove_child(child)
+		child.queue_free()
+		current_sugar -= 1
+	
+	# Add missing sugar icons
+	while current_sugar < new_value:
+		var sugar_instance = sugar_scene.instantiate()
+		sugar_container.add_child(sugar_instance)
+		current_sugar += 1
 
 func show_hud() -> void:
 	health_display.visible = true

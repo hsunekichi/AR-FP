@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://boqggbbrjn760"]
+
+[ext_resource type="Texture2D" uid="uid://dhy67e0w4yqqm" path="res://Art/Dino Tri/Donut.png" id="1_0jdt8"]
+
+[node name="Donut" type="TextureRect"]
+custom_minimum_size = Vector2(64, 64)
+texture = ExtResource("1_0jdt8")
+expand_mode = 1
