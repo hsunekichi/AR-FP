@@ -9,12 +9,21 @@ var timer: Timer = null
 
 func _ready() -> void:
 	visible = false
+	
+	# Match viewport size
+	_update_size()
+	get_viewport().size_changed.connect(_update_size)
 
 	timer = Timer.new()
 	timer.one_shot = true
 	timer.wait_time = total_duration
 	timer.timeout.connect(disable)
 	add_child(timer)
+
+func _update_size() -> void:
+	var viewport_size = get_viewport_rect().size
+	size = viewport_size
+	position = Vector2.ZERO
 
 func set_duration(duration: float) -> void:
 	total_duration = duration
