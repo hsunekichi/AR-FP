@@ -446,10 +446,8 @@ func build_tilemap():
 			else:  # true = passage, leave empty (no tile)
 				tilemap.erase_cell(coords)
 	
-	# Build left border wall (except bottom-left entry)
+	# Build left border wall
 	for y in range(maze_height):
-		if y == maze_height - 1:  # Skip bottom-left entry
-			continue
 		var coords := Vector2i(-1, y)
 		var tile = get_tile_for_position(-1, y)
 		tilemap.set_cell(coords, tile_source_id, tile)
@@ -554,8 +552,6 @@ func is_wall(x: int, y: int) -> bool:
 	# Border walls
 	if x == -1 or x == maze_width or y == -1 or y == maze_height:
 		# Check for entry/exit openings
-		if x == -1 and y == maze_height - 1:  # Bottom-left entry
-			return false
 		if x == maze_width and y == 0:  # Top-right exit
 			return false
 		return true
