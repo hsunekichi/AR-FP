@@ -12283,18 +12283,6 @@ offset_top = -63.0
 offset_right = 560.868
 offset_bottom = 65.0
 
-[node name="LifeOne" parent="HealthDisplay/HBoxContainer" instance=ExtResource("2_iylfn")]
-custom_minimum_size = Vector2(128, 128)
-layout_mode = 2
-
-[node name="LifeOne2" parent="HealthDisplay/HBoxContainer" instance=ExtResource("2_iylfn")]
-custom_minimum_size = Vector2(128, 128)
-layout_mode = 2
-
-[node name="LifeOne3" parent="HealthDisplay/HBoxContainer" instance=ExtResource("2_iylfn")]
-custom_minimum_size = Vector2(128, 128)
-layout_mode = 2
-
 [node name="SugarDisplay" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
