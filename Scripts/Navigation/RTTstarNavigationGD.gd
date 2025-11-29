@@ -6,13 +6,16 @@ extends Node
 var MAX_NEIGHBORS: int = 5 ## Maximum number of neighbors to consider when connecting a new point, controls efficiency and optimality of paths
 var SAMPLE_DISTANCE_MULTIPLIER: float = 3.5 ## Multiplier for the sampling disk around the actor and goal. 1 means the circle will pass through each of them
 var MIN_SAMPLE_DISTANCE: float = 0.45 * World.ppu ## Minimum distance to consider a neighbor valid when connecting a new point
+var PATH_SAMPLING_PROBABILITY: float = 0.4 ## Probability to sample along the current path instead of the global circle when a path exists
+var PATH_SAMPLING_RADIUS: float = 1.0 * World.ppu ## Radius around path points for sampling
 
-var MAX_TREE_SIZE: int = 1500 ## Maximum number of nodes in the RTT* tree
+var MAX_TREE_SIZE: int = 2000 ## Maximum number of nodes in the RTT* tree when no path exists
+var MAX_TREE_SIZE_WITH_PATH: int = 600 ## Maximum number of nodes when a path is already found
 var TREE_BUILD_SAMPLES: int = 10 ## Maxumum number of samples to generate when building a new tree. If a path is found earlier, the process stops
 var TREE_REFINE_SAMPLES: int = 3 ## Number of samples to generate when refining an existing tree
 
-var MAX_TREE_BASE_SIZE: int = 800
-var _tree_limit: int = MAX_TREE_BASE_SIZE
+var _tree_limit: int = MAX_TREE_SIZE
+var _tree_increased_limit: int = 0
 
 ## Returns a trajectory from the origin to the target, optimized for the current position.
 ##  The trajectory may not be reachable from the current position, in which case the caller 
@@ -21,10 +24,14 @@ func generate_trajectory(current_position: Vector2, goal: Vector2) -> PackedVect
 	
 	if _tree.isEmpty(): # Build or refine the tree
 		_build_new_tree(current_position, goal)
-	else:
-		_generate_samples(current_position, goal, TREE_REFINE_SAMPLES, false)
 
 	var path := build_path(goal, MAX_NEIGHBORS)
+	
+	# Update tree limit based on whether we have a path
+	if path.is_empty():
+		_tree_limit = MAX_TREE_SIZE  # Allow larger tree when searching for initial path
+	else:
+		_tree_limit = MAX_TREE_SIZE_WITH_PATH + _tree_increased_limit  # Use smaller tree when refining existing path
 	
 	# Tree is full but no path found, reset
 	if path.is_empty() and _tree.size() == _tree_limit:
@@ -33,6 +40,8 @@ func generate_trajectory(current_position: Vector2, goal: Vector2) -> PackedVect
 		#  to not overload the current frame
 
 		World.log("The tree is full and no path was found, clearing tree")
+	else:
+		_generate_samples(current_position, goal, TREE_REFINE_SAMPLES, path)
 	
 	return path
 
@@ -44,18 +53,18 @@ func restart(origin: Vector2) -> void:
 		_tree_display.clear_markers()	
 
 func increase_tree_limit(amount: int) -> void:
-	_tree_limit = min(_tree_limit + amount, MAX_TREE_SIZE)
+	_tree_increased_limit = min(_tree_increased_limit + amount, MAX_TREE_SIZE - MAX_TREE_SIZE_WITH_PATH)
 
 
 func _build_new_tree(origin: Vector2, goal: Vector2):
 	restart(origin)
 
 	# Generate many samples to favor a quick path, but stop as soon as the goal is reached
-	_generate_samples(origin, goal, TREE_BUILD_SAMPLES, true)
+	_generate_samples(origin, goal, TREE_BUILD_SAMPLES, PackedVector2Array())
 	World.log("Built new RTT* tree with ", _tree.size(), " nodes towards ", goal)
 
 
-func _generate_samples(origin: Vector2, goal: Vector2, nSamples: int, stop_on_goal: bool) -> void:
+func _generate_samples(origin: Vector2, goal: Vector2, nSamples: int, current_path: PackedVector2Array) -> void:
 	# Expand the tree until finished
 	for i in range(nSamples):
 		# Safety to prevent too large trees
@@ -63,23 +72,43 @@ func _generate_samples(origin: Vector2, goal: Vector2, nSamples: int, stop_on_go
 			return
 
 		# Generate a new point
-		var sample_point := _sample_point(origin, goal)
+		var sample_point := _sample_point(origin, goal, current_path)
 		var cost := _insert_point(sample_point)
 
-		if cost != INF and stop_on_goal and not World.ray_intersects_ground(sample_point, goal):
+		# If there was no previous path, stop as soon as we have it 
+		if cost != INF and current_path.is_empty() and not World.ray_intersects_ground(sample_point, goal):
 			return
 
 
 # Uniform disk sampling around the center between actor and target
-func _sample_point(origin: Vector2, goal: Vector2) -> Vector2:
-	var l_center := (goal - origin) * 0.5
-	var center := origin + l_center
+# If a path exists, with a certain probability samples along the path instead
+func _sample_point(origin: Vector2, goal: Vector2, current_path: PackedVector2Array) -> Vector2:
+	# If we have a path and random chance says so, sample along the path
+	if not current_path.is_empty() and randf() < PATH_SAMPLING_PROBABILITY:
+		# Pick a random segment along the path
+		var segment_idx := randi_range(0, current_path.size() - 2)
+		var segment_start := current_path[segment_idx]
+		var segment_end := current_path[segment_idx + 1]
+		
+		# Pick a random point along the segment
+		var t := randf()
+		var point_on_segment := segment_start.lerp(segment_end, t)
+		
+		# Sample around this point in a circle
+		var angle := randf_range(0, TAU)
+		var r := sqrt(randf()) * PATH_SAMPLING_RADIUS
+		
+		return point_on_segment + r * Vector2.from_angle(angle)
+	else:
+		# Default: uniform disk sampling around the center between actor and target
+		var l_center := (goal - origin) * 0.5
+		var center := origin + l_center
 
-	var angle := randf_range(0, TAU)
-	var d := l_center.length() * SAMPLE_DISTANCE_MULTIPLIER
-	var r := sqrt(randf()) * d
+		var angle := randf_range(0, TAU)
+		var d := l_center.length() * SAMPLE_DISTANCE_MULTIPLIER
+		var r := sqrt(randf()) * d
 
-	return center + r * Vector2.from_angle(angle)
+		return center + r * Vector2.from_angle(angle)
 
 
 ## Insert a point into the RTT* tree and connect it appropriately
