@@ -135,8 +135,19 @@ causing stuttering and unresponsive behaviour that
 completely break the user experience.
 Even more, repeatedly exceeding the budget may cause the physics 
 engine to enter a "spiral of death" \cite{spiral_of_death}, a state where the engine fails 
-to keep up with the target framerate, ticks accumulate infinitely
-and the simulation indefinitely becomes unresponsive.  
+to keep up with the target framerate, ticks accumulate infinitely (see figure \ref{fig:spiral_of_death})
+and the simulation indefinitely becomes unresponsive. 
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\columnwidth]{Images/SpiralOfDeath.png}
+    \caption{Profiler visualization showing the "spiral of death" phenomenon, where physics ticks accumulate and cause 
+        the simulation to break \cite{spiral_of_death}. The X axis is execution time,
+        and the Y axis is physics latency. The red line is the 
+        target framerate (16ms).
+    }
+    \label{fig:spiral_of_death}
+\end{figure}
 
 Rendering and UI run separately in the variable-rate 
 \texttt{\_process()} loop and are not involved 
