@@ -179,36 +179,72 @@ the kinematic constraints of the agent.
 
 \subsection{Real-time optimization}\label{sec:rrtstar_optimization}
 
-To ensure real-time performance, many optimizations 
+To ensure real-time performance, many optimizations and heuristics
 work together to speed up the location of valid 
 paths and reduce the performance overhead of the tree maintenance.
 These optimizations tend to hinder the optimality of the solution,
-in favor of a more responsive and light behaviour.  
+in favor of a more responsive and light behaviour in the 
+most computationally demanding piece of the pipeline.
+
+\subsubsection{Sampling}
+
+These optimizations focus on reducing the sampling space and 
+the number of samples needed to find a valid path, which improve 
+responsiveness at the cost of path optimality and completeness.
+
 \begin{itemize}
-     \item \textbf{K-nearest rewiring:} When a new node is added, only the k-nearest neighbors are considered for rewiring, limiting computational overhead to a fixed amount. However
-            this directly limits the quality of the path found, in comparison to considering all nodes within a radius. It is a direct trade-off between performance and optimality. 
+    \item \textbf{Adaptive sampling:} Samples are generated uniformly within a disk around the agent and the current goal, 
+            focusing exploration on relevant areas. The size of the disk 
+            is configurable, and significantly affects the 
+            convergence speed. While key in the performance of the algorithm,
+            this makes impossible to find paths path that go outside the disk, 
+            so more complex heuristics could be designed 
+            to adaptively increase the disk size when needed.
+
     \item \textbf{Sparse sampling:} When a sample is generated too close to an existing node, it is discarded and a new sample is generated.
             This prevents the tree from growing too dense in small areas, which would increase computation time without improving path quality.
-            However, this threshold must be small enough to allow the tree to explore narrow passages. This feature may reduce the bias introduced by K-nearest rewiring, 
-            since a less dense tree will favor wider (and better) rewirings.
-    \item \textbf{Path sampling:} When a path already exists, a configurable percentage of samples are generated around the existing path instead of the global disk.
-            This focuses exploration on improving the existing path, which is likely to be close to optimal already. The rest of the samples are still generated in the global disk
-            to allow discovering new paths.
+            This threshold must be small enough to allow the tree to explore narrow passages, but even small values provide
+            significant improvements in a space where the alternative is an infinitely dense tree. 
+
     \item \textbf{Hot start:} When the agent visibility of the path is lost due to changes 
             in the goal instead of dynamic obstacles, the previous path usually is still close to a valid one. 
             Thus, the previous path is used as a seed to sample a percentage of the new points, which usually speeds up 
             the location of a valid path significantly. 
+
+    \item \textbf{Tree size limit:} To reduce the tree-search space, there is a dynamic maximum point amount 
+            that depends on whether a path has been found or not. When there 
+            are no paths, the tree can grow larger to explore more space. 
+            When the map changes this amount is also increased temporarily 
+            to allow finding new paths. This again limits the ceiling
+            of path complexity that cand be found, but it provides hard bounds
+            to the computational cost of the planner which is crucial
+            for a real-time system.
+\end{itemize}
+
+\subsubsection{Rewiring}
+
+These optimizations focus on reducing the computational cost of the rewiring step,
+which is typically the most expensive part of RRT*.
+
+\begin{itemize}
+    \item \textbf{K-nearest rewiring:} When a new node is added, only the k-nearest neighbors are considered for rewiring, 
+            limiting computational overhead to a constant amount.
+            This directly limits the optimality of the paths, in comparison 
+            to considering all nodes within a radius. It is a direct 
+            trade-off between performance and path optimality. 
+            The bias introduced may be mitigated by the sparse sampling 
+            optimization, since a less dense tree will favor wider 
+            (and thus better) rewirings.
+    \item \textbf{Quick build:} Each time the tree is rebuilt, a large number of samples is generated to quickly find an initial path. 
+            Each new sample tests the goal, and the process stops as soon as a path is found. Then, subsequent refinements 
+            will use fewer samples to optimize the existing tree in a goal-agnostic way.
+            This helps to reduce the frame-time budget used by the planner while still providing fast responsiveness of the agent's movement.
     \item \textbf{Efficient nearest neighbor search:} A k-d tree structure is used to allow fast nearest neighbor queries during tree expansion. 
             It was adapted from \cite{geeksforgeeks_kdtree} to work with Godot's Vector2 class, and optimized significantly.
-    \item \textbf{Adaptive sampling:} Samples are generated uniformly within a disk around the agent and the current goal, focusing exploration on relevant areas. The size of the disk is configurable,
-          which directly affects the convergence speed. If the path goes outside the disk it will never be found, so the disk could by automatically increased if no path is found after some time.
-    \item \textbf{Quick build:} Each time the tree is rebuilt, a large number of samples is generated to quickly find an initial path. 
-            Each new sample tests the goal, and the process stops as soon as a path is found. Then, subsequent refinements will use fewer samples to optimize the existing tree in a goal-agnostic way.
-            This helps to reduce the frame-time budget used by the planner while still providing fast responsiveness of the agent's movement.
-    \item \textbf{Tree size limit:} To reduce the tree-search space, there are multiple maximum point amounts depending on whether
-           a path has been found or not. When there are no paths, the tree can grow larger to explore more space. When the map changes
-           this amount is also increased temporarily to allow finding new paths.
 \end{itemize}
+
+Together, these optimizations allow the RRT* planner to operate within a tight per-frame budget,
+finding valid paths in a few seconds even in complex, dynamic environments.
 
 \section{Trajectory following}\label{sec:trajectory}
 
@@ -327,6 +363,27 @@ sampling to randomly find the new opened spot).
     \label{fig:debugMazeOpen}
 \end{figure}
 
+\subsection{Very large path generation}
+
+In most short and medium cases, the path is found fast and nearly optially.
+The main problem this algorithm faces is when the required path is very large:
+first, the limited tree size makes it impossible to explore the whole space,
+although that could be reduced by dynamically increasing the tree size 
+limit when the sampling disk is big at the cost of performance.
+
+Second, the maximum sampling disk greatly improves performance and convergence,
+but it makes impossible to find paths that go outside of it. If the 
+player is close to the agent but separated by a large obstacle,
+the agent will never be able to find a path to the player.
+
+This is particularly noticeable in the hard level, which is a big 
+maze (30x20 cells), and there are often enemies stuck because the path 
+needs to go around large obstacles that are either outside the sampling disk
+or require a very large tree to explore the whole path. 
+
+This problem is inherent to purely sampling-based planners, and the only 
+workarounds are using heuristics to increase the effective search area
+or using a more advanced planning algorithm.
 
 \subsection{Performance testing}\label{sec:performance}
 
