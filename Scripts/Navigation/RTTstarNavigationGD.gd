@@ -6,6 +6,7 @@ extends Node
 var MAX_NEIGHBORS: int = 5 ## Maximum number of neighbors to consider when connecting a new point, controls efficiency and optimality of paths
 var SAMPLE_DISTANCE_MULTIPLIER: float = 3.5 ## Multiplier for the sampling disk around the actor and goal. 1 means the circle will pass through each of them
 var MIN_SAMPLE_DISTANCE: float = 0.45 * World.ppu ## Minimum distance to consider a neighbor valid when connecting a new point
+var MIN_SAMPLE_DISTANCE_PATH: float = 0.2 * World.ppu ## Minimum distance to consider a neighbor valid when connecting a new point sampled along the path
 var PATH_SAMPLING_PROBABILITY: float = 0.4 ## Probability to sample along the current path instead of the global circle when a path exists
 var PATH_SAMPLING_RADIUS: float = 1.0 * World.ppu ## Radius around path points for sampling
 
@@ -72,8 +73,9 @@ func _generate_samples(origin: Vector2, goal: Vector2, nSamples: int, current_pa
 			return
 
 		# Generate a new point
-		var sample_point := _sample_point(origin, goal, current_path)
-		var cost := _insert_point(sample_point)
+		var samplePath = randf() < PATH_SAMPLING_PROBABILITY # Need to decide it here to pass it to both functions
+		var sample_point := _sample_point(origin, goal, current_path, samplePath)
+		var cost := _insert_point(sample_point, samplePath)
 
 		# If there was no previous path, stop as soon as we have it 
 		if cost != INF and current_path.is_empty() and not World.ray_intersects_ground(sample_point, goal):
@@ -82,9 +84,9 @@ func _generate_samples(origin: Vector2, goal: Vector2, nSamples: int, current_pa
 
 # Uniform disk sampling around the center between actor and target
 # If a path exists, with a certain probability samples along the path instead
-func _sample_point(origin: Vector2, goal: Vector2, current_path: PackedVector2Array) -> Vector2:
+func _sample_point(origin: Vector2, goal: Vector2, current_path: PackedVector2Array, samplePath: bool) -> Vector2:
 	# If we have a path and random chance says so, sample along the path
-	if not current_path.is_empty() and randf() < PATH_SAMPLING_PROBABILITY:
+	if not current_path.is_empty() and samplePath:
 		# Pick a random segment along the path
 		var segment_idx := randi_range(0, current_path.size() - 2)
 		var segment_start := current_path[segment_idx]
@@ -113,10 +115,11 @@ func _sample_point(origin: Vector2, goal: Vector2, current_path: PackedVector2Ar
 
 ## Insert a point into the RTT* tree and connect it appropriately
 ## Returns the total cost of the new node, or INF if not connected
-func _insert_point(point: Vector2) -> float:
+func _insert_point(point: Vector2, isPathSampled: bool) -> float:
 	var nearest := _tree.get_k_nearest(point, MAX_NEIGHBORS)
 
-	if nearest.is_empty() or _tree.get_point(nearest[0]).distance_to(point) < MIN_SAMPLE_DISTANCE:
+	var min_sample_distance = MIN_SAMPLE_DISTANCE if not isPathSampled else MIN_SAMPLE_DISTANCE_PATH
+	if nearest.is_empty() or _tree.get_point(nearest[0]).distance_to(point) < min_sample_distance:
 		return INF # Too close to existing point
 
 	buff_parent_cost.resize(nearest.size())

@@ -330,6 +330,11 @@ sampling to randomly find the new opened spot).
 
 \subsection{Performance testing}\label{sec:performance}
 
+Due to the large amount of optimizations, testing the impact of each
+optimization individually would take a lot of effort. 
+Because of that the tests have been conducted using all 
+of them aggregated, to evaluate the performance of the resulting system.
+
 The navigation pipeline takes around 0.6ms per frame, mostly inside
 the get-k-nearest function. This is a heavily algorithmic function 
 with a significant penalty coming from GDscript's interpreted nature. 
