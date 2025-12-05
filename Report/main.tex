@@ -193,7 +193,22 @@ During execution the agent's position diverges from the tree root, so when an un
 emerges or dynamic obstacles invalidate part of the current route, the tree needs to be rebuilt from 
 the current agent's position.
 
-[Figure of the RTT* display]
+\subsection{RRT Display}
+
+To help with debugging and testing, a visualization system has been implemented to display the RRT* tree
+and the paths generated. It generates one visible 
+point per tree node, and red lines that show
+the generated path by RRT*. These points and path display
+are updated every frame to reflect the current state of the tree
+and navigation.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.6\columnwidth]{Images/RRTdisplay.png}
+    \caption{Display of the RRT* tree and path in the debug maze. Both are updated in real-time.
+    }
+    \label{fig:rrtdisplay}
+\end{figure}
 
 \subsection{Dynamic obstacles}
 In dynamic environments, continuous sampling allows to naturally discover new paths that were not previously available.
@@ -382,7 +397,7 @@ to feature narrow passages with a complex path.
     \label{fig:debugMaze}
 \end{figure}
 
-By just adding 10 new points per frame, RTT* + ND is able 
+By just adding 10 new points per frame, RRT* + ND is able 
 to find a path through the maze in an average of 3.7 seconds.
 While the path has not been found the local planner temporarily 
 traverses the maze following any free passage, with 

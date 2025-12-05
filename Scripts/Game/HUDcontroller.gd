@@ -1,9 +1,6 @@
 class_name HUDcontroller
 extends CanvasLayer
 
-@export var life_scene: PackedScene
-@export var sugar_scene: PackedScene
-
 @onready var transition: Node = $Transition
 @onready var health_display: Node = $HealthDisplay/HBoxContainer
 @onready var sugar_display: Node = $SugarDisplay/HBoxContainer
@@ -24,6 +21,7 @@ func _ready() -> void:
 
 	$SugarRushEffect.total_duration = World.config_value("sugar_rush_duration", 2.0)
 	$EatSugarEffect.total_duration = 1.0
+	$HealthDisplay.visible = false
 
 	World.config_changed.connect(config_changed)
 
@@ -101,46 +99,21 @@ func disable_transition():
 		child.visible = false	
 
 func update_health(new_health: int) -> void:
-	var lives_container := $HealthDisplay/HBoxContainer
-	var current_lives := lives_container.get_child_count()
+	$HealthDisplay.update_value(new_health)
 	
-	# Remove excess lives
-	while current_lives > new_health:
-		var child = lives_container.get_child(current_lives - 1)
-		lives_container.remove_child(child)
-		child.queue_free()
-		current_lives -= 1
-	
-	# Add missing lives
-	while current_lives < new_health:
-		var life_instance = life_scene.instantiate()
-		lives_container.add_child(life_instance)
-		current_lives += 1
 
 func update_sugar_level(new_value: int) -> void:
-	var sugar_container := $SugarDisplay/HBoxContainer
-	var current_sugar := sugar_container.get_child_count()
-	
-	# Remove excess sugar icons
-	while current_sugar > new_value:
-		var child = sugar_container.get_child(current_sugar - 1)
-		sugar_container.remove_child(child)
-		child.queue_free()
-		current_sugar -= 1
-	
-	# Add missing sugar icons
-	while current_sugar < new_value:
-		var sugar_instance = sugar_scene.instantiate()
-		sugar_container.add_child(sugar_instance)
-		current_sugar += 1
+	$SugarDisplay.update_value(new_value)
 
 func show_hud() -> void:
 	health_display.visible = true
 	sugar_display.visible = true
+	$HealthDisplay.visible = true
 
 func on_game_ended() -> void:
 	health_display.visible = false
 	sugar_display.visible = false
+	$HealthDisplay.visible = false
 	
 func open_pause() -> void:
 	pause_menu.visible = true

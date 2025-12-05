@@ -1431,16 +1431,8 @@ _source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\">
 _source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><rect width=\"14\" height=\"14\" x=\"1\" y=\"1\" fill=\"#1a1a1a\" fill-opacity=\".25\" rx=\"2.333\"/></svg>
 "
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ufxsp"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.4, 1, 0.4, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_caim4"]
+bg_color = Color(0.85882354, 0.6862745, 0.45490196, 1)
 corner_detail = 5
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_1skdt"]
@@ -1487,7 +1479,7 @@ PopupMenu/icons/submenu = ExtResource("6_owi87")
 PopupMenu/icons/submenu_mirrored = ExtResource("7_kya2h")
 PopupMenu/icons/unchecked = SubResource("DPITexture_mar3f")
 PopupMenu/icons/unchecked_disabled = SubResource("DPITexture_3phib")
-PopupMenu/styles/hover = SubResource("StyleBoxFlat_ufxsp")
+PopupMenu/styles/hover = SubResource("StyleBoxFlat_caim4")
 PopupMenu/styles/labeled_separator_left = SubResource("StyleBoxLine_1skdt")
 PopupMenu/styles/labeled_separator_right = SubResource("StyleBoxLine_1skdt")
 PopupMenu/styles/panel = SubResource("StyleBoxTexture_48cs2")

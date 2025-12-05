@@ -191,7 +191,6 @@ func _load_config_file(difficulty: String, path: String) -> void:
 			var parse_result = json.parse(json_string)
 			if parse_result == OK:
 				configs[difficulty] = json.data
-				print("Loaded config for ", difficulty, " difficulty from ", path)
 			else:
 				print("Error parsing ", path, ": ", json.get_error_message())
 		else:

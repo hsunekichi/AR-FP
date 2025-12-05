@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://cewvmgmy1y537"]
+[gd_scene load_steps=31 format=3 uid="uid://dwa45xr4rebwo"]
 
 [ext_resource type="Script" uid="uid://leusnapulo60" path="res://Scripts/Game/HUDcontroller.gd" id="1_sd512"]
 [ext_resource type="PackedScene" uid="uid://byfwek3xujxll" path="res://Scenes/GameAssets/Piruleta.tscn" id="2_iylfn"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://d0np1r4gub5y0" path="res://Scripts/SFX/SugarEffectController.gd" id="4_c3eba"]
 [ext_resource type="Shader" uid="uid://tj3yuby32lhv" path="res://Scripts/SFX/EatSugar.gdshader" id="4_s3jbq"]
 [ext_resource type="Texture2D" uid="uid://rrp2vg7xg515" path="res://Art/Dino Tri/DinoIcon.png" id="6_0hk07"]
+[ext_resource type="Script" uid="uid://jtjrfvehi3nb" path="res://Scripts/Game/StatDisplay.gd" id="6_ls8yp"]
 [ext_resource type="Texture2D" uid="uid://dvomyaw5t5gii" path="res://Art/candy land - UI/menu - Large H.png" id="9_o2h1v"]
 [ext_resource type="PackedScene" uid="uid://cd67h1ppritvf" path="res://Scenes/menu_button.tscn" id="10_gxcq2"]
 [ext_resource type="Texture2D" uid="uid://bibjj2lgk5jpf" path="res://Art/Screens/PauseScreenTransparent.png" id="10_ls8yp"]
@@ -82,8 +83,6 @@ shader_parameter/inner_radius = 0.2
 [node name="HUDcontroller" type="CanvasLayer"]
 process_mode = 3
 script = ExtResource("1_sd512")
-life_scene = ExtResource("2_iylfn")
-sugar_scene = ExtResource("3_gxcq2")
 
 [node name="Templates" type="Control" parent="."]
 visible = false
@@ -12262,6 +12261,8 @@ offset_left = 72.0
 offset_top = 8.0
 offset_right = 868.0
 offset_bottom = 250.0
+script = ExtResource("6_ls8yp")
+statIcon = ExtResource("2_iylfn")
 
 [node name="CharacterIcon" type="TextureRect" parent="HealthDisplay"]
 custom_minimum_size = Vector2(256, 0)
@@ -12293,6 +12294,8 @@ offset_left = 260.0
 offset_top = 198.0
 offset_right = 300.0
 offset_bottom = 238.0
+script = ExtResource("6_ls8yp")
+statIcon = ExtResource("3_gxcq2")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="SugarDisplay"]
 custom_minimum_size = Vector2(64, 64)
