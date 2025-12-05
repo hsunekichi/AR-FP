@@ -7,11 +7,13 @@ const GAME_MUSIC_EASY = preload("res://Art/Music/The Donut Dash.mp3")
 const GAME_MUSIC_MEDIUM = preload("res://Art/Music/Tricera-Dash.mp3")
 const GAME_MUSIC_HARD = preload("res://Art/Music/Candy Escape.mp3")
 
+var music_volume = -10
+
 func _ready() -> void:
 	add_child(player)
 	player.autoplay = false
 	player.finished.connect(_on_player_finished)
-	player.volume_db = -25
+	player.volume_db = music_volume
 
 func _on_player_finished() -> void:
 	player.play()
