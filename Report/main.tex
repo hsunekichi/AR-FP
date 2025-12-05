@@ -347,7 +347,19 @@ The final steering direction is the normalized sum of the valley heading unit ve
 and the accumulated repulsion. The result is a smooth, goal-oriented motion that
 moves around immediate obstacles without abrupt changes in direction.
 
-[Figure with ND rays + goal, an obstacle, the selected valley, the repulsion vectors and the final direction]
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1.0\columnwidth]{Images/NDdiagram.png}
+    \caption{Diagram with the main components of the discretized ND controller.
+    1) Proximity rays detect obstacles around the agent.
+    2) Free (green) valleys are identified and refined with shape-casts.
+    3) The selected valley is decided with hysteresis toward the goal direction. 
+    4) Occupied (red) valleys contribute repulsion forces.
+    5) The best valley toward the goal is the combination of 
+        the selected valley direction and the repulsion vectors.
+    }
+    \label{fig:NDdiagram}
+\end{figure}
 
 This reactive layer complements the global RRT* planner: the global module supplies 
 a path in continuous space; the agent's controller decides which sub-point to follow,
