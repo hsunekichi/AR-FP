@@ -16,9 +16,10 @@ func _physics_process(_delta: float) -> void:
 		return
 	
 	var target := _compute_direction()
-	var direction := nd.compute_direction(global_position, target)
+	if target != Vector2.ZERO:
+		target = nd.compute_direction(global_position, target)
 
-	velocity = direction * FLY_SPEED
+	velocity = target * FLY_SPEED
 
 	if velocity.x != 0 and sign(velocity.x) != looking_dir_x():
 		scale.x = -scale.x
