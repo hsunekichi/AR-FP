@@ -123,17 +123,19 @@ func disable_input() -> void:
 	animator.play("Idle")
 	set_process(false)
 	set_physics_process(false)
+	disable_propulsion()
+
 func enable_input() -> void:
 	visible = true
 	set_process(true)
 	set_physics_process(true)
 
-func increase_sugar(amount: int = 1) -> void:
+func increase_sugar(amount: int = 1, use_sfx: bool = true) -> void:
 	sugar_level += amount
 	World.sugar_level_changed(sugar_level)
 	World.activate_sugar_eat_effect()
-	$DonutSFX.play()
-
+	if use_sfx:
+		$DonutSFX.play()
 
 ######### Main Physics Loop #########
 func _physics_process(delta: float) -> void:

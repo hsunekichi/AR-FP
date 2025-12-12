@@ -132,6 +132,7 @@ func load_controls() -> void:
 
 func load_menu() -> void:
 	# Menu music
+	Player.disable_input()
 	MusicManager.play_menu_music()
 	change_scene(main_menu_scene, "", HUD)
 
@@ -151,7 +152,7 @@ func load_debug() -> void:
 	var initialize_player = func():
 		HUD.show_hud()
 		Player.initialize()
-		Player.increase_sugar(100)
+		Player.increase_sugar(100, false)
 	change_scene(debug_scene, "Game", self, initialize_player)
 func game_completed() -> void:
 	game_finished.emit()

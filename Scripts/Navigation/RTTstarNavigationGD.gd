@@ -5,8 +5,10 @@ extends Node
 
 var MAX_NEIGHBORS: int = 5 ## Maximum number of neighbors to consider when connecting a new point, controls efficiency and optimality of paths
 var SAMPLE_DISTANCE_MULTIPLIER: float = 3.5 ## Multiplier for the sampling disk around the actor and goal. 1 means the circle will pass through each of them
-var MIN_SAMPLE_DISTANCE: float = 0.45 * World.ppu ## Minimum distance to consider a neighbor valid when connecting a new point
-var MIN_SAMPLE_DISTANCE_PATH: float = 0.2 * World.ppu ## Minimum distance to consider a neighbor valid when connecting a new point sampled along the path
+var MIN_SAMPLE_RADIUS: float = 15 * World.ppu ## Minimum radius of the disk around the actor and goal used for sampling
+
+var MIN_NEIGHBOR_DISTANCE: float = 0.45 * World.ppu ## Minimum distance to consider a neighbor valid when connecting a new point
+var MIN_PATH_NEIGHBOR_DISTANCE: float = 0.2 * World.ppu ## Minimum distance to consider a neighbor valid when connecting a new point sampled along the path
 var PATH_SAMPLING_PROBABILITY: float = 0.3 ## Probability to sample along the current path instead of the global circle when a path exists
 var PATH_SAMPLING_RADIUS: float = 1.0 * World.ppu ## Radius around path points for sampling
 
@@ -107,7 +109,7 @@ func _sample_point(origin: Vector2, goal: Vector2, current_path: PackedVector2Ar
 		var center := origin + l_center
 
 		var angle := randf_range(0, TAU)
-		var d := l_center.length() * SAMPLE_DISTANCE_MULTIPLIER
+		var d := maxf(l_center.length() * SAMPLE_DISTANCE_MULTIPLIER, MIN_SAMPLE_RADIUS)
 		var r := sqrt(randf()) * d
 
 		return center + r * Vector2.from_angle(angle)
@@ -118,7 +120,7 @@ func _sample_point(origin: Vector2, goal: Vector2, current_path: PackedVector2Ar
 func _insert_point(point: Vector2, isPathSampled: bool) -> float:
 	var nearest := _tree.get_k_nearest(point, MAX_NEIGHBORS)
 
-	var min_sample_distance = MIN_SAMPLE_DISTANCE if not isPathSampled else MIN_SAMPLE_DISTANCE_PATH
+	var min_sample_distance = MIN_NEIGHBOR_DISTANCE if not isPathSampled else MIN_PATH_NEIGHBOR_DISTANCE
 	if nearest.is_empty() or _tree.get_point(nearest[0]).distance_to(point) < min_sample_distance:
 		return INF # Too close to existing point
 

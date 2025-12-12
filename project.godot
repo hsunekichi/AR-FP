@@ -21,7 +21,6 @@ config/icon="res://icon.svg"
 
 World="*res://Scripts/Game/World.gd"
 Player="*res://Scenes/Bob.tscn"
-DebugMenu="*res://addons/debug_menu/debug_menu.tscn"
 MusicManager="*res://Scripts/Game/MusicManager.gd"
 
 [display]
@@ -33,10 +32,6 @@ window/stretch/mode="canvas_items"
 [dotnet]
 
 project/assembly_name="AR-FP"
-
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/debug_menu/plugin.cfg")
 
 [global_group]
 
