@@ -1,6 +1,7 @@
-[gd_scene load_steps=31 format=3 uid="uid://dwa45xr4rebwo"]
+[gd_scene load_steps=32 format=3 uid="uid://dwa45xr4rebwo"]
 
 [ext_resource type="Script" uid="uid://leusnapulo60" path="res://Scripts/Game/HUDcontroller.gd" id="1_sd512"]
+[ext_resource type="Script" uid="uid://dwuv38ww527gl" path="res://Scripts/SFX/ContentResizer.gd" id="2_7tyse"]
 [ext_resource type="PackedScene" uid="uid://byfwek3xujxll" path="res://Scenes/GameAssets/Piruleta.tscn" id="2_iylfn"]
 [ext_resource type="Texture2D" uid="uid://xxwcqol0t2lu" path="res://Art/Deserts/DessertSpriteSheet_NOTOUTLINED.png" id="2_jo1ms"]
 [ext_resource type="PackedScene" uid="uid://boqggbbrjn760" path="res://Scenes/GameAssets/DonutDisplay.tscn" id="3_gxcq2"]
@@ -88,8 +89,11 @@ script = ExtResource("1_sd512")
 visible = false
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 537.0
+offset_top = 170.0
+offset_right = 577.0
+offset_bottom = 210.0
+script = ExtResource("2_7tyse")
 
 [node name="Desert0" type="TextureRect" parent="Templates"]
 texture_filter = 1
@@ -223,8 +227,9 @@ visible = false
 z_index = 10
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 1.0
+offset_bottom = 1.0
+script = ExtResource("2_7tyse")
 
 [node name="Desert0_clone_1" type="TextureRect" parent="Transition"]
 texture_filter = 1
@@ -12255,6 +12260,7 @@ script = ExtResource("4_c3eba")
 alpha = 0.7
 
 [node name="HealthDisplay" type="Control" parent="."]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_left = 72.0

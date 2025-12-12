@@ -1,5 +1,18 @@
 extends Control
 
+@onready var background: TextureRect = $Background
+
+func _ready() -> void:
+	background.size = get_viewport_rect().size
+
+	var vp = get_viewport()
+	if vp and not vp.size_changed.is_connected(_on_viewport_size_changed):
+		vp.size_changed.connect(_on_viewport_size_changed)
+
+
+func _on_viewport_size_changed() -> void:
+	background.size = get_viewport_rect().size
+
 func _on_play_button_pressed() -> void:
 	World.load_maze()
 	$AudioStreamPlayer2.play()

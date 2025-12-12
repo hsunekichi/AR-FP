@@ -19,6 +19,12 @@ func _ready() -> void:
 	pause_menu.visible = false
 	hungry_display.visible = false
 
+	_on_viewport_size_changed()
+	var vp = get_viewport()
+	if vp and not vp.size_changed.is_connected(_on_viewport_size_changed):
+		vp.size_changed.connect(_on_viewport_size_changed)
+
+
 	$SugarRushEffect.total_duration = World.config_value("sugar_rush_duration", 2.0)
 	$EatSugarEffect.total_duration = 1.0
 	$HealthDisplay.visible = false
@@ -148,3 +154,6 @@ func _on_HomeButton_pressed() -> void:
 	
 func _on_mycontrol_mouse_entered():
 	$PauseMenu/AudioStreamPlayer.play()
+
+func _on_viewport_size_changed() -> void:
+	transition.rescale_all(transition.get_viewport_rect().size / Vector2(1920, 1080))
