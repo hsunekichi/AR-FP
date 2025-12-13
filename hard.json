@@ -8,5 +8,5 @@
     "maze_enemies": 15,
     "maze_width": 40,
     "maze_height": 30,
-    "maze_connect_one_cell_walls_probability": 0.18
+    "maze_connect_one_cell_walls_probability": 0.15
 }
