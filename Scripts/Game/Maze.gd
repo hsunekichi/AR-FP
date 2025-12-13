@@ -17,7 +17,7 @@ signal maze_changed
 @export var nDonuts: int = 5
 
 @export_group("Maze Generation")
-@export_range(0.0, 1.0, 0.01) var connect_one_cell_walls_probability: float = 0.1
+@export_range(0.0, 1.0, 0.01) var wall_skip_probability: float = 0.1
 
 # TileMap configuration
 @export var tile_source_id: int = 0  # Source ID in the TileSet
@@ -192,7 +192,7 @@ func _ready():
 	enemy_count = World.config_value("maze_enemies", 2)
 	maze_width = World.config_value("maze_width", 10)
 	maze_height = World.config_value("maze_height", 5)
-	connect_one_cell_walls_probability = World.config_value("maze_connect_one_cell_walls_probability", 0.05)
+	wall_skip_probability = World.config_value("maze_wall_skip_probability", 0.05)
 
 	if procedural_generation:
 		generate_maze()
@@ -385,7 +385,7 @@ func _generate_maze_internal():
 	maze[maze_width - 1][0] = PASSAGE
 
 	# Optional post-step: occasionally connect corridors separated by a 1-cell wall.
-	_connect_one_cell_walls(connect_one_cell_walls_probability, random)
+	_connect_one_cell_walls(wall_skip_probability, random)
 
 
 func _connect_one_cell_walls(probability: float, rng: RandomNumberGenerator) -> void:

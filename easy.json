@@ -8,5 +8,5 @@
     "maze_enemies": 3,
     "maze_width": 10,
     "maze_height": 5,
-    "maze_connect_one_cell_walls_probability": 0
+    "maze_wall_skip_probability": 0
 }

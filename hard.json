@@ -5,8 +5,8 @@
     "sugar_rush_cooldown": 1.5,
     
     "maze_donuts": 9,
-    "maze_enemies": 15,
-    "maze_width": 40,
-    "maze_height": 30,
-    "maze_connect_one_cell_walls_probability": 0.15
+    "maze_enemies": 20,
+    "maze_width": 50,
+    "maze_height": 40,
+    "maze_wall_skip_probability": 0.125
 }
