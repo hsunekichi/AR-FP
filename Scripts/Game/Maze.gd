@@ -16,6 +16,9 @@ signal maze_changed
 @export var maze_height: int = 5
 @export var nDonuts: int = 5
 
+@export_group("Maze Generation")
+@export_range(0.0, 1.0, 0.01) var connect_one_cell_walls_probability: float = 0.1
+
 # TileMap configuration
 @export var tile_source_id: int = 0  # Source ID in the TileSet
 @export var tile_top_left: Vector2i = Vector2i(0, 0)
@@ -189,6 +192,7 @@ func _ready():
 	enemy_count = World.config_value("maze_enemies", 2)
 	maze_width = World.config_value("maze_width", 10)
 	maze_height = World.config_value("maze_height", 5)
+	connect_one_cell_walls_probability = World.config_value("maze_connect_one_cell_walls_probability", 0.05)
 
 	if procedural_generation:
 		generate_maze()
@@ -379,6 +383,46 @@ func _generate_maze_internal():
 	
 	# Open top-right corner as exit (x=maze_width-1, y=0)
 	maze[maze_width - 1][0] = PASSAGE
+
+	# Optional post-step: occasionally connect corridors separated by a 1-cell wall.
+	_connect_one_cell_walls(connect_one_cell_walls_probability, random)
+
+
+func _connect_one_cell_walls(probability: float, rng: RandomNumberGenerator) -> void:
+	# Connect two passages that are separated by exactly one wall cell (N-S or E-W).
+	# This adds occasional loops to reduce overly linear mazes.
+	if probability <= 0.0:
+		return
+	if maze_width < 3 and maze_height < 3:
+		return
+
+	var candidates: Array[Vector2i] = []
+
+	# Horizontal candidates: PASSAGE - WALL - PASSAGE
+	for x in range(1, maze_width - 1):
+		for y in range(0, maze_height):
+			if maze[x][y] != WALL:
+				continue
+			if maze[x - 1][y] == PASSAGE and maze[x + 1][y] == PASSAGE:
+				candidates.append(Vector2i(x, y))
+
+	# Vertical candidates: PASSAGE
+	#                      WALL
+	#                      PASSAGE
+	for x in range(0, maze_width):
+		for y in range(1, maze_height - 1):
+			if maze[x][y] != WALL:
+				continue
+			if maze[x][y - 1] == PASSAGE and maze[x][y + 1] == PASSAGE:
+				candidates.append(Vector2i(x, y))
+
+	if candidates.is_empty():
+		return
+
+	candidates.shuffle()
+	for cell in candidates:
+		if rng.randf() < probability:
+			maze[cell.x][cell.y] = PASSAGE
 
 func has_path_from_start_to_end() -> bool:
 	# BFS to check if there's a path from (0, maze_height-1) to (maze_width-1, 0)

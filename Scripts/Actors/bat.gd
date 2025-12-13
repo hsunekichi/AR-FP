@@ -18,8 +18,8 @@ func _physics_process(_delta: float) -> void:
 		velocity = Vector2.ZERO
 		return
 	
-	var target := _compute_direction()
-	if target != Vector2.ZERO:
+	var target := _compute_direction() # Get a global position
+	if target != Vector2.ZERO: # Change to a local direction
 		target = nd.compute_direction(global_position, target)
 
 	velocity = target * FLY_SPEED

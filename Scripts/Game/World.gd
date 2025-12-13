@@ -34,7 +34,6 @@ var show_navigation: bool = false
 
 signal game_finished
 signal config_changed
-signal sugar_rush_failed_no_charges
 
 func _ready() -> void:
 	# Set clear color
@@ -151,8 +150,8 @@ func get_maze() -> Node:
 func load_debug() -> void:
 	var initialize_player = func():
 		HUD.show_hud()
-		Player.initialize()
-		Player.increase_sugar(100, false)
+		Player.initialize(true)
+		Player.increase_sugar(10, false)
 	change_scene(debug_scene, "Game", self, initialize_player)
 func game_completed() -> void:
 	game_finished.emit()

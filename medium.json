@@ -7,5 +7,6 @@
     "maze_donuts": 4,
     "maze_enemies": 5,
     "maze_width": 20,
-    "maze_height": 15
+    "maze_height": 15,
+    "maze_connect_one_cell_walls_probability": 0.1
 }

@@ -27,7 +27,7 @@ func _on_play_controls() -> void:
 	
 func _on_play_quit() -> void:
 	$AudioStreamPlayer2.play()
-	await $AudioStreamPlayer2.finished
+	await get_tree().create_timer(0.3).timeout
 	get_tree().quit()
 
 func _on_mycontrol_mouse_entered():

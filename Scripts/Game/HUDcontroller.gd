@@ -31,7 +31,7 @@ func _ready() -> void:
 	$HealthDisplay.visible = false
 
 	World.config_changed.connect(config_changed)
-	World.sugar_rush_failed_no_charges.connect(_on_sugar_rush_failed_no_charges)
+	Player.sugar_rush_failed.connect(_on_sugar_rush_failed_no_charges)
 
 func config_changed() -> void:
 	$SugarRushEffect.total_duration = World.config_value("sugar_rush_duration", 2.0)

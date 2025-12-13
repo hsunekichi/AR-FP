@@ -4,6 +4,8 @@ extends CharacterBody2D
 enum State { NORMAL, SITTING, DASHING }
 var current_state: State = State.NORMAL
 
+signal sugar_rush_failed
+
 ######### Movement Parameters #########
 @export var speed: float = 250.0
 @export var air_speed: float = 175.0
@@ -91,7 +93,7 @@ func _ready() -> void:
 
 	
 
-func initialize() -> void:
+func initialize(invincible: bool = false) -> void:
 	sugar_level = World.config_value("starting_sugar", 0)
 	health = World.config_value("starting_health", 3)
 	World.sugar_level_changed(sugar_level)
@@ -112,6 +114,7 @@ func initialize() -> void:
 	animator.play("SitIdle")
 	velocity = Vector2.ZERO
 
+	is_invincible = invincible
 
 	enable_input()
 
@@ -182,7 +185,7 @@ func _process_normal_state(delta: float) -> void:
 		if sugar_level > 0:
 			start_sugar_rush()
 		else:
-			World.sugar_rush_failed_no_charges.emit()
+			sugar_rush_failed.emit()
 	
 	_handle_sugar_rush()
 	_apply_propulsion(delta)
