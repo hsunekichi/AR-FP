@@ -2,77 +2,89 @@
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{hart_a_star_1968}
 \citation{godot_navigation}
+\citation{hart_a_star_1968}
+\citation{lavalle_rrt_1998}
+\citation{karaman_rrtstar}
+\citation{fox_dwa_1997}
 \providecommand \oddpage@label [2]{}
 \@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{section.1}\protected@file@percent }
 \newlabel{sec:intro}{{I}{1}{Introduction}{section.1}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Example of a graph navigation mesh in Godot Engine \cite  {godot_navigation}. }}{1}{figure.1}\protected@file@percent }
 \newlabel{fig:godot_navmesh}{{1}{1}{Example of a graph navigation mesh in Godot Engine \cite {godot_navigation}}{figure.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {I-A}Bob in the candyland}{1}{subsection.1.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Main menu of Bob in the candyland. }}{1}{figure.2}\protected@file@percent }
-\newlabel{fig:candyland_menu}{{2}{1}{Main menu of Bob in the candyland}{figure.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {I-B}Simulation framework}{1}{subsection.1.2}\protected@file@percent }
-\newlabel{sec:simulation}{{I-B}{1}{Simulation framework}{subsection.1.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {II}Related work}{1}{section.2}\protected@file@percent }
+\newlabel{sec:related_work}{{II}{1}{Related work}{section.2}{}}
+\citation{arob_repo}
 \citation{spiral_of_death}
 \citation{spiral_of_death}
 \citation{spiral_of_death}
 \citation{godot_engine}
 \citation{karaman_rrtstar}
+\@writefile{toc}{\contentsline {subsection}{\numberline {II-A}Bob in the candyland}{2}{subsection.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Main menu of Bob in the candyland. }}{2}{figure.2}\protected@file@percent }
+\newlabel{fig:candyland_menu}{{2}{2}{Main menu of Bob in the candyland}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {II-B}Simulation framework}{2}{subsection.2.2}\protected@file@percent }
+\newlabel{sec:simulation}{{II-B}{2}{Simulation framework}{subsection.2.2}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Profiler visualization showing the "spiral of death" phenomenon, where physics ticks accumulate and cause the simulation to break \cite  {spiral_of_death}. The X axis is execution time, and the Y axis is physics latency. The red line is the target framerate (16ms). }}{2}{figure.3}\protected@file@percent }
 \newlabel{fig:spiral_of_death}{{3}{2}{Profiler visualization showing the "spiral of death" phenomenon, where physics ticks accumulate and cause the simulation to break \cite {spiral_of_death}. The X axis is execution time, and the Y axis is physics latency. The red line is the target framerate (16ms)}{figure.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {I-C}The navigation pipeline}{2}{subsection.1.3}\protected@file@percent }
-\newlabel{sec:pipeline}{{I-C}{2}{The navigation pipeline}{subsection.1.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {II}Global planner: RRT*}{2}{section.2}\protected@file@percent }
-\newlabel{sec:rrtstar}{{II}{2}{Global planner: RRT*}{section.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {II-A}RRT Display}{2}{subsection.2.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Display of the RRT* tree and path in the debug maze. Both are updated in real-time. }}{2}{figure.4}\protected@file@percent }
-\newlabel{fig:rrtdisplay}{{4}{2}{Display of the RRT* tree and path in the debug maze. Both are updated in real-time}{figure.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {II-B}Dynamic obstacles}{2}{subsection.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {II-C}Collision checking}{2}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {II-C}The navigation pipeline}{2}{subsection.2.3}\protected@file@percent }
+\newlabel{sec:pipeline}{{II-C}{2}{The navigation pipeline}{subsection.2.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {III}Global planner: RRT*}{2}{section.3}\protected@file@percent }
+\newlabel{sec:rrtstar}{{III}{2}{Global planner: RRT*}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {III-A}RRT Display}{3}{subsection.3.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Display of the RRT* tree and path in the debug maze. Both are updated in real-time. }}{3}{figure.4}\protected@file@percent }
+\newlabel{fig:rrtdisplay}{{4}{3}{Display of the RRT* tree and path in the debug maze. Both are updated in real-time}{figure.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {III-B}Dynamic obstacles}{3}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {III-C}Collision checking}{3}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {III-D}Real-time optimization}{3}{subsection.3.4}\protected@file@percent }
+\newlabel{sec:rrtstar_optimization}{{III-D}{3}{Real-time optimization}{subsection.3.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {III-D.1}Sampling}{3}{subsubsection.3.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {III-D.2}Rewiring}{3}{subsubsection.3.4.2}\protected@file@percent }
 \citation{geeksforgeeks_kdtree}
 \citation{minguez_nd_2004}
-\@writefile{toc}{\contentsline {subsection}{\numberline {II-D}Real-time optimization}{3}{subsection.2.4}\protected@file@percent }
-\newlabel{sec:rrtstar_optimization}{{II-D}{3}{Real-time optimization}{subsection.2.4}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {II-D.1}Sampling}{3}{subsubsection.2.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {II-D.2}Rewiring}{3}{subsubsection.2.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {III}Trajectory following}{3}{section.3}\protected@file@percent }
-\newlabel{sec:trajectory}{{III}{3}{Trajectory following}{section.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {IV}Local planner: Discretized nearness diagram}{3}{section.4}\protected@file@percent }
-\newlabel{sec:ND}{{IV}{3}{Local planner: Discretized nearness diagram}{section.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Trajectory following}{4}{section.4}\protected@file@percent }
+\newlabel{sec:trajectory}{{IV}{4}{Trajectory following}{section.4}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Display of the trajectory following logic. The agent (bat character) follows the path (grey line) by targeting the next segment endpoint (green circle). In the figure multiple segments are computed, but only the next one (Computed distance of the green arrow) is used as target, the other segments are ignored (red arrow). }}{4}{figure.5}\protected@file@percent }
 \newlabel{fig:rrttrajectory}{{5}{4}{Display of the trajectory following logic. The agent (bat character) follows the path (grey line) by targeting the next segment endpoint (green circle). In the figure multiple segments are computed, but only the next one (Computed distance of the green arrow) is used as target, the other segments are ignored (red arrow)}{figure.5}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Diagram with the main components of the discretized ND controller. 1) Proximity rays detect obstacles around the agent. 2) Free (green) valleys are identified and refined with shape-casts. 3) The selected valley is decided with hysteresis toward the goal direction. 4) Occupied (red) valleys contribute repulsion forces. 5) The best valley toward the goal is the combination of the selected valley direction and the repulsion vectors. }}{4}{figure.6}\protected@file@percent }
-\newlabel{fig:NDdiagram}{{6}{4}{Diagram with the main components of the discretized ND controller. 1) Proximity rays detect obstacles around the agent. 2) Free (green) valleys are identified and refined with shape-casts. 3) The selected valley is decided with hysteresis toward the goal direction. 4) Occupied (red) valleys contribute repulsion forces. 5) The best valley toward the goal is the combination of the selected valley direction and the repulsion vectors}{figure.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {IV-A}Performance considerations}{4}{subsection.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {V}Low-level controler}{5}{section.5}\protected@file@percent }
-\newlabel{sec:lowlevelcontrol}{{V}{5}{Low-level controler}{section.5}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {VI}Testing}{5}{section.6}\protected@file@percent }
-\newlabel{sec:testing}{{VI}{5}{Testing}{section.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {VI-A}Navigation testing}{5}{subsection.6.1}\protected@file@percent }
-\newlabel{sec:nav_testing}{{VI-A}{5}{Navigation testing}{subsection.6.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Local planner: Discretized nearness diagram}{4}{section.5}\protected@file@percent }
+\newlabel{sec:ND}{{V}{4}{Local planner: Discretized nearness diagram}{section.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Diagram with the main components of the discretized ND controller. 1) Proximity rays detect obstacles around the agent. 2) Free (green) valleys are identified and refined with shape-casts. 3) The selected valley is decided with hysteresis toward the goal direction. 4) Occupied (red) valleys contribute repulsion forces. 5) The best valley toward the goal is the combination of the selected valley direction and the repulsion vectors. }}{5}{figure.6}\protected@file@percent }
+\newlabel{fig:NDdiagram}{{6}{5}{Diagram with the main components of the discretized ND controller. 1) Proximity rays detect obstacles around the agent. 2) Free (green) valleys are identified and refined with shape-casts. 3) The selected valley is decided with hysteresis toward the goal direction. 4) Occupied (red) valleys contribute repulsion forces. 5) The best valley toward the goal is the combination of the selected valley direction and the repulsion vectors}{figure.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {V-A}Performance considerations}{5}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Low-level controler}{5}{section.6}\protected@file@percent }
+\newlabel{sec:lowlevelcontrol}{{VI}{5}{Low-level controler}{section.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Testing}{5}{section.7}\protected@file@percent }
+\newlabel{sec:testing}{{VII}{5}{Testing}{section.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {VII-A}Navigation testing}{5}{subsection.7.1}\protected@file@percent }
+\newlabel{sec:nav_testing}{{VII-A}{5}{Navigation testing}{subsection.7.1}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Path generated in the demo level. }}{5}{figure.7}\protected@file@percent }
 \newlabel{fig:debugMaze}{{7}{5}{Path generated in the demo level}{figure.7}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Path generated in the demo level after opening a new path. }}{5}{figure.8}\protected@file@percent }
 \newlabel{fig:debugMazeOpen}{{8}{5}{Path generated in the demo level after opening a new path}{figure.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {VI-B}Very large path generation}{5}{subsection.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {VI-C}Performance testing}{5}{subsection.6.3}\protected@file@percent }
-\newlabel{sec:performance}{{VI-C}{5}{Performance testing}{subsection.6.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {VI-D}Load testing}{5}{subsection.6.4}\protected@file@percent }
-\newlabel{sec:load_testing}{{VI-D}{5}{Load testing}{subsection.6.4}{}}
-\bibstyle{IEEEtran}
-\bibdata{biblio}
-\bibcite{godot_navigation}{1}
-\bibcite{spiral_of_death}{2}
-\bibcite{godot_engine}{3}
-\bibcite{karaman_rrtstar}{4}
-\bibcite{geeksforgeeks_kdtree}{5}
-\bibcite{minguez_nd_2004}{6}
+\@writefile{toc}{\contentsline {subsection}{\numberline {VII-B}Very large path generation}{5}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {VII-C}Performance testing}{6}{subsection.7.3}\protected@file@percent }
+\newlabel{sec:performance}{{VII-C}{6}{Performance testing}{subsection.7.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {VII-D}Load testing}{6}{subsection.7.4}\protected@file@percent }
+\newlabel{sec:load_testing}{{VII-D}{6}{Load testing}{subsection.7.4}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Frame time of the execution with 50 agents navigating simultaneously. The red line marks 16ms, the budget for 60 ticks per second. }}{6}{figure.9}\protected@file@percent }
 \newlabel{fig:frameTime}{{9}{6}{Frame time of the execution with 50 agents navigating simultaneously. The red line marks 16ms, the budget for 60 ticks per second}{figure.9}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {VII}Conclusions}{6}{section.7}\protected@file@percent }
-\newlabel{sec:conclusion}{{VII}{6}{Conclusions}{section.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusions}{6}{section.8}\protected@file@percent }
+\newlabel{sec:conclusion}{{VIII}{6}{Conclusions}{section.8}{}}
 \@writefile{toc}{\contentsline {section}{Appendix}{6}{section*.1}\protected@file@percent }
 \newlabel{sec:appendix}{{}{6}{Appendix}{section*.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {A}Project structure}{6}{subsection.Appendix.A.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{References}{6}{section*.2}\protected@file@percent }
-\gdef \@abspage@last{6}
+\bibstyle{IEEEtran}
+\bibdata{biblio}
+\bibcite{hart_a_star_1968}{1}
+\bibcite{godot_navigation}{2}
+\bibcite{lavalle_rrt_1998}{3}
+\bibcite{karaman_rrtstar}{4}
+\bibcite{fox_dwa_1997}{5}
+\bibcite{arob_repo}{6}
+\bibcite{spiral_of_death}{7}
+\bibcite{godot_engine}{8}
+\bibcite{geeksforgeeks_kdtree}{9}
+\bibcite{minguez_nd_2004}{10}
+\@writefile{toc}{\contentsline {section}{References}{7}{section*.2}\protected@file@percent }
+\gdef \@abspage@last{7}

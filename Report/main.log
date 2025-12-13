@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.11.21)  12 DEC 2025 19:41
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.11.21)  13 DEC 2025 22:24
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -451,86 +451,87 @@ Package hyperref Info: Link coloring OFF on input line 36.
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
-<Images/GodotNavigation.jpeg, id=101, 1327.96124pt x 624.3325pt>
+<Images/GodotNavigation.jpeg, id=106, 1327.96124pt x 624.3325pt>
 File: Images/GodotNavigation.jpeg Graphic file (type jpg)
 <use Images/GodotNavigation.jpeg>
-Package pdftex.def Info: Images/GodotNavigation.jpeg  used on input line 73.
+Package pdftex.def Info: Images/GodotNavigation.jpeg  used on input line 90.
 (pdftex.def)             Requested size: 196.57523pt x 92.4169pt.
-<Images/CandylandMenu.png, id=104, 2466.21375pt x 1385.175pt>
+ [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}
+
+
+ <./Images/GodotNavigation.jpeg>]
+<Images/CandylandMenu.png, id=128, 2466.21375pt x 1385.175pt>
 File: Images/CandylandMenu.png Graphic file (type png)
 <use Images/CandylandMenu.png>
-Package pdftex.def Info: Images/CandylandMenu.png  used on input line 108.
+Package pdftex.def Info: Images/CandylandMenu.png  used on input line 151.
 (pdftex.def)             Requested size: 196.57523pt x 110.39354pt.
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 124.
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 167.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-) [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}
-
-
- <./Images/GodotNavigation.jpeg> <./Images/CandylandMenu.png>]
-<Images/SpiralOfDeath.png, id=122, 829.0975pt x 313.17pt>
+)
+<Images/SpiralOfDeath.png, id=132, 829.0975pt x 313.17pt>
 File: Images/SpiralOfDeath.png Graphic file (type png)
 <use Images/SpiralOfDeath.png>
-Package pdftex.def Info: Images/SpiralOfDeath.png  used on input line 143.
+Package pdftex.def Info: Images/SpiralOfDeath.png  used on input line 186.
 (pdftex.def)             Requested size: 196.57523pt x 74.24962pt.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 164.
+
+Underfull \vbox (badness 1895) has occurred while \output is active []
+
+LaTeX Font Info:    Trying to load font information for U+msa on input line 207.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 164.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 207.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-<Images/RRTdisplay.png, id=127, 1159.33125pt x 654.445pt>
+) [2 <./Images/CandylandMenu.png> <./Images/SpiralOfDeath.png>]
+<Images/RRTdisplay.png, id=151, 1159.33125pt x 654.445pt>
 File: Images/RRTdisplay.png Graphic file (type png)
 <use Images/RRTdisplay.png>
-Package pdftex.def Info: Images/RRTdisplay.png  used on input line 207.
+Package pdftex.def Info: Images/RRTdisplay.png  used on input line 250.
 (pdftex.def)             Requested size: 147.43236pt x 83.22343pt.
- [2 <./Images/SpiralOfDeath.png> <./Images/RRTdisplay.png>]
-<Images/RRTTrajectory.png, id=141, 3910.61pt x 2129.9575pt>
+ [3 <./Images/RRTdisplay.png>]
+<Images/RRTTrajectory.png, id=159, 3910.61pt x 2129.9575pt>
 File: Images/RRTTrajectory.png Graphic file (type png)
 <use Images/RRTTrajectory.png>
-Package pdftex.def Info: Images/RRTTrajectory.png  used on input line 315.
+Package pdftex.def Info: Images/RRTTrajectory.png  used on input line 359.
 (pdftex.def)             Requested size: 245.71811pt x 133.80452pt.
- [3]
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 332.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 376.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-<Images/NDdiagram.png, id=149, 2413.015pt x 1437.37pt>
+<Images/NDdiagram.png, id=161, 2413.015pt x 1437.37pt>
 File: Images/NDdiagram.png Graphic file (type png)
 <use Images/NDdiagram.png>
-Package pdftex.def Info: Images/NDdiagram.png  used on input line 361.
+Package pdftex.def Info: Images/NDdiagram.png  used on input line 405.
 (pdftex.def)             Requested size: 245.71811pt x 146.35538pt.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 3590) has occurred while \output is active []
 
-
-Underfull \vbox (badness 3872) has occurred while \output is active []
-
- [4 <./Images/RRTTrajectory.png> <./Images/NDdiagram.png>]
-<Images/DemoMaze.png, id=161, 1004.75375pt x 773.89125pt>
+ [4 <./Images/RRTTrajectory.png>]
+<Images/DemoMaze.png, id=173, 1004.75375pt x 773.89125pt>
 File: Images/DemoMaze.png Graphic file (type png)
 <use Images/DemoMaze.png>
-Package pdftex.def Info: Images/DemoMaze.png  used on input line 415.
+Package pdftex.def Info: Images/DemoMaze.png  used on input line 459.
 (pdftex.def)             Requested size: 147.43236pt x 113.55164pt.
-<Images/DemoMazeOpen.png, id=163, 998.73125pt x 773.89125pt>
+<Images/DemoMazeOpen.png, id=175, 998.73125pt x 773.89125pt>
 File: Images/DemoMazeOpen.png Graphic file (type png)
 <use Images/DemoMazeOpen.png>
-Package pdftex.def Info: Images/DemoMazeOpen.png  used on input line 434.
+Package pdftex.def Info: Images/DemoMazeOpen.png  used on input line 478.
 (pdftex.def)             Requested size: 147.43236pt x 114.23653pt.
-<Images/profiler.png, id=165, 829.0975pt x 202.7575pt>
+ [5 <./Images/NDdiagram.png> <./Images/DemoMaze.png> <./Images/DemoMazeOpen.png>]
+<Images/profiler.png, id=188, 829.0975pt x 202.7575pt>
 File: Images/profiler.png Graphic file (type png)
 <use Images/profiler.png>
-Package pdftex.def Info: Images/profiler.png  used on input line 497.
+Package pdftex.def Info: Images/profiler.png  used on input line 542.
 (pdftex.def)             Requested size: 196.57523pt x 48.07187pt.
- [5 <./Images/DemoMaze.png> <./Images/DemoMazeOpen.png>] (./main.bbl
-Underfull \hbox (badness 10000) in paragraph at lines 36--37
+ [6 <./Images/profiler.png>] (./main.bbl
+Underfull \hbox (badness 10000) in paragraph at lines 48--49
 []\OT1/ptm/m/n/8 GeeksforGeeks, ``Search and in-ser-tion in k-dimensional
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 36--37
+Underfull \hbox (badness 10000) in paragraph at lines 48--49
 \OT1/ptm/m/n/8 tree (kd-tree),'' []$https : / / www . geeksforgeeks . org / dsa /
  []
 
@@ -546,27 +547,29 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the US letter (8.5in X 11in) paper size.
 
-[6 <./Images/profiler.png>] (./main.aux)
+[7
+
+] (./main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 1ADAE43342BFB015632883DCAB048CE5;3442.
+(rerunfilecheck)             Checksum: C318FC28B1EC002EB4EC00E273AF8A68;3549.
  ) 
 Here is how much of TeX's memory you used:
- 12466 strings out of 476106
- 193996 string characters out of 5793932
- 1943975 words of memory out of 5000000
- 34230 multiletter control sequences out of 15000+600000
+ 12478 strings out of 476106
+ 194174 string characters out of 5793932
+ 1945975 words of memory out of 5000000
+ 34236 multiletter control sequences out of 15000+600000
  595843 words of font info for 110 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
- 75i,9n,79p,619b,444s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,9n,79p,619b,526s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (6 pages, 3297760 bytes).
+Output written on main.pdf (7 pages, 3303409 bytes).
 PDF statistics:
- 236 PDF objects out of 1000 (max. 8388607)
- 192 compressed objects within 2 object streams
- 47 named destinations out of 1000 (max. 500000)
- 238 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 259 PDF objects out of 1000 (max. 8388607)
+ 213 compressed objects within 3 object streams
+ 53 named destinations out of 1000 (max. 500000)
+ 246 words of extra memory for PDF output out of 10000 (max. 10000000)
 
