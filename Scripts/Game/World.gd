@@ -108,6 +108,8 @@ func change_scene(scene: PackedScene, scene_name: String = "", parent: Node = nu
 	if current_scene:
 		current_scene.queue_free()
 
+	await get_tree().process_frame # Wait until the scene is freed
+
 	# Execute setup callback if provided (for pre-scene setup)
 	if setup_callback.is_valid():
 		setup_callback.call()

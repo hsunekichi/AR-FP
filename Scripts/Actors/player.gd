@@ -115,6 +115,7 @@ func initialize(invincible: bool = false) -> void:
 	velocity = Vector2.ZERO
 
 	is_invincible = invincible
+	isRemovingCells = false
 
 	enable_input()
 
