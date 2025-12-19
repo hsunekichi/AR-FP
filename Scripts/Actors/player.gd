@@ -292,8 +292,7 @@ func _apply_propulsion(delta: float) -> void:
 
 func _apply_gravity(delta: float) -> void:
 	if not isPropulsing and not is_on_floor():
-		velocity.y = max(0, velocity.y + gravity * delta)
-		velocity.y = min(velocity.y, MAX_FALL_SPEED)
+		velocity.y = clampf(velocity.y + gravity * delta, 0, MAX_FALL_SPEED)
 
 func _apply_horizontal_movement(delta: float) -> void:
 	var target_speed: float
